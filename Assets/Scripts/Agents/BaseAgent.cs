@@ -12,7 +12,7 @@ public abstract class BaseAgent
 
     protected BaseAgent()
     {
-        apiService = new ApiService();
+        apiService = new ChatApiService();
     }
 
     protected async Task<string> Prompt(string prompt)

@@ -4,18 +4,21 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class ApiService : IApiService
+/// <summary>
+/// Api service to ChatGPT to return text only.
+/// </summary>
+public class ChatApiService : IApiService
 {
-    private const string ApiUrl = "https://api.openai.com/v1/responses";
+    private const string API_URL = "https://api.openai.com/v1/responses";
 
     private static string ApiKey =>
         Environment.GetEnvironmentVariable("OPENAI_API_KEY")
         ?? throw new InvalidOperationException(
             "OPENAI_API_KEY environment variable is not set.");
 
-    public async Task<string> GetResponse(string input)
+    public async Task<string> GetResponse(string prompt)
     {
-        if (string.IsNullOrWhiteSpace(input))
+        if (string.IsNullOrWhiteSpace(prompt))
         {
             throw new ApiException("Input cannot be empty.");
         }
@@ -23,14 +26,14 @@ public class ApiService : IApiService
         var requestBody = new OpenAIRequest
         {
             model = "gpt-5.6",
-            input = input
+            prompt = prompt
         };
 
         string json = JsonUtility.ToJson(requestBody);
         byte[] body = Encoding.UTF8.GetBytes(json);
 
         using UnityWebRequest request = new(
-            ApiUrl,
+            API_URL,
             UnityWebRequest.kHttpVerbPOST);
 
         request.uploadHandler = new UploadHandlerRaw(body);
@@ -59,7 +62,7 @@ public class ApiService : IApiService
 public class OpenAIRequest
 {
     public string model;
-    public string input;
+    public string prompt;
 }
 
 [Serializable]
