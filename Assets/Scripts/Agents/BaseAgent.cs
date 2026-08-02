@@ -3,9 +3,9 @@ using UnityEngine;
 
 public abstract class BaseAgent
 {
-    private readonly IApiService apiService;
+    private readonly ITextApiService apiService;
 
-    protected BaseAgent(IApiService apiService)
+    protected BaseAgent(ITextApiService apiService)
     {
         this.apiService = apiService;
     }

@@ -5,7 +5,7 @@ public class TestAgentTest
     [Test]
     public void GetPromptResults_ValidPrompt_Success()
     {
-        IApiService apiService = new MockApiService();
+        ITextApiService apiService = new MockApiService();
         TestAgent agent = new(apiService);
         
         Assert.NotNull(agent.GetPromptResults());
@@ -14,7 +14,7 @@ public class TestAgentTest
     [Test]
     public void GetPromptResults_ThrowsError_ReturnsNull()
     {
-        IApiService apiService = new MockFailingApiService();
+        ITextApiService apiService = new MockFailingApiService();
         TestAgent agent = new(apiService);
 
         Assert.Null(agent.GetPromptResults());
