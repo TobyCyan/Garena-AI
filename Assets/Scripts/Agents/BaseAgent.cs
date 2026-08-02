@@ -1,9 +1,19 @@
 using System.Threading.Tasks;
 using UnityEngine;
 
-public abstract class BaseAgent : MonoBehaviour
+public abstract class BaseAgent
 {
-    private static readonly ApiService apiService = new();
+    private readonly IApiService apiService;
+
+    protected BaseAgent(IApiService apiService)
+    {
+        this.apiService = apiService;
+    }
+
+    protected BaseAgent()
+    {
+        apiService = new ApiService();
+    }
 
     protected async Task<string> Prompt(string prompt)
     {
@@ -17,4 +27,6 @@ public abstract class BaseAgent : MonoBehaviour
             return null;
         }
     }
+
+    public abstract string GetPromptResults();
 }

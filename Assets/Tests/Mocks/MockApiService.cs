@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 
-public class MockApiService : ApiService
+public class MockApiService : IApiService
 {
-    public override Task<string> GetResponse(string input)
+    public Task<string> GetResponse(string input)
     {
         return Task.FromResult($"Mock response from {input}");
     }

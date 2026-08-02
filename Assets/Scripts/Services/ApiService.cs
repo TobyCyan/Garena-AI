@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class ApiService
+public class ApiService : IApiService
 {
     private const string ApiUrl = "https://api.openai.com/v1/responses";
 
@@ -13,7 +13,7 @@ public class ApiService
         ?? throw new InvalidOperationException(
             "OPENAI_API_KEY environment variable is not set.");
 
-    public async virtual Task<string> GetResponse(string input)
+    public async Task<string> GetResponse(string input)
     {
         if (string.IsNullOrWhiteSpace(input))
         {
