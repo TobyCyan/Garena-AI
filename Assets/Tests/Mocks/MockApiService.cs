@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-public class MockApiService : IApiService
+public class MockApiService : ITextApiService
 {
     public Task<string> GetResponse(string input)
     {
