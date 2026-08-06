@@ -4,6 +4,10 @@ using System.Collections;
 public class WeaponShowcaseManager : MonoBehaviour
 {
     [SerializeField] private ParticleSystem burstEffect;
+
+    // Particle System Settings
+    private const int SEED = 12345;
+
     // For testing.
     [SerializeField] private GameObject weapon;
 
@@ -17,6 +21,8 @@ public class WeaponShowcaseManager : MonoBehaviour
         if (burstEffect != null)
         {
             burstEffect.Stop();
+            burstEffect.useAutoRandomSeed = false;
+            burstEffect.randomSeed = SEED;
         }
 
         if (weapon != null)
