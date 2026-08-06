@@ -1,6 +1,4 @@
 using Player.Weapons;
-using System;
-using System.Collections;
 
 public class WeaponBuildPipelineObject : IPipelineObject
 {
