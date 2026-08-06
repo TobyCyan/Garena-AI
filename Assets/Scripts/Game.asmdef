@@ -1,3 +1,6 @@
 {
-	"name": "Game"
+	"name": "Game",
+	"references": [
+		"Unity.InputSystem"
+	]
 }
