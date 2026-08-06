@@ -13,7 +13,7 @@ public class WeaponShowcaseManager : MonoBehaviour
     [SerializeField] private Vector3 initialSpriteScale = new(1.5f, 1.5f, 1f);
     private static readonly Vector3 ORIGINAL_SPRITE_SCALE = Vector3.one;
 
-    private void Awake()
+    public void Init()
     {
         if (burstEffect != null)
         {
