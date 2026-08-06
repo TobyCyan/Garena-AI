@@ -44,7 +44,7 @@ public class PipelineManager : MonoBehaviour
         if (!pipelines.TryGetValue(id, out Pipeline pipeline))
         {
             Debug.LogError($"Pipeline {id} was not found.");
-            return input;
+            return null;
         }
 
         return pipeline.Pipe(input);
