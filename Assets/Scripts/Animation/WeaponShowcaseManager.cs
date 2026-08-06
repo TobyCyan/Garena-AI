@@ -8,9 +8,6 @@ public class WeaponShowcaseManager : MonoBehaviour
     // Particle System Settings
     private const int SEED = 12345;
 
-    // For testing.
-    [SerializeField] private GameObject weapon;
-
     // Weapon Sprite Animation Settings
     [SerializeField] private float lerpDuration = 0.25f;
     [SerializeField] private Vector3 initialSpriteScale = new(1.5f, 1.5f, 1f);
@@ -24,19 +21,6 @@ public class WeaponShowcaseManager : MonoBehaviour
             burstEffect.useAutoRandomSeed = false;
             burstEffect.randomSeed = SEED;
         }
-
-        if (weapon != null)
-        {
-            weapon.SetActive(false);
-        }
-    }
-
-    private void Start()
-    {
-        if (weapon != null)
-        {
-            ShowcaseWeapon(weapon);
-        }
     }
 
     public void ShowcaseWeapon(GameObject weaponGo)
@@ -49,10 +33,6 @@ public class WeaponShowcaseManager : MonoBehaviour
 
         weaponGo.SetActive(true);
         weaponGo.transform.localPosition = Vector3.zero;
-        if (burstEffect != null)
-        {
-            burstEffect.Play();
-        }
 
         if (weaponGo.TryGetComponent(out SpriteRenderer spriteRenderer))
         {
@@ -61,6 +41,11 @@ public class WeaponShowcaseManager : MonoBehaviour
         else
         {
             Debug.LogWarning("Weapon GameObject does not have a SpriteRenderer component.");
+        }
+
+        if (burstEffect != null)
+        {
+            burstEffect.Play();
         }
     }
 
