@@ -1,3 +1,5 @@
+using Player.Weapons;
+
 public class WeaponStatGeneratorPipelineObject : IPipelineObject
 {
     public BasePipelineData DoPipe(BasePipelineData input)
@@ -6,9 +8,7 @@ public class WeaponStatGeneratorPipelineObject : IPipelineObject
         {
             throw new PipelineException("Input data must be of type WeaponStatGeneratorPipelineData.");
         }
-        var generatedStats = WeaponStatGeneratorService.GenerateWeaponStats(data.Prompt);
-        // TODO: Return as WeaponStats object.
-        // return new WeaponStatBalancerPipelineData(generatedStats);
-        return new WeaponStatGeneratorPipelineData(generatedStats);
+        WeaponStats generatedStats = WeaponStatGeneratorService.GenerateWeaponStats(data.Prompt);
+        return new WeaponStatBalancerPipelineData(generatedStats);
     }
 }

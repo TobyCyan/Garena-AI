@@ -2,9 +2,9 @@ using Player.Weapons;
 
 public class WeaponBalancerService
 {
-    public static Weapon BalanceWeapon(Weapon weapon)
+    public static WeaponStats BalanceWeapon(WeaponStats weaponStats)
     {
-        // Implement your weapon balancing logic here
-        return weapon;
+        // Implement weapon balancing logic here
+        return weaponStats;
     }
 }
