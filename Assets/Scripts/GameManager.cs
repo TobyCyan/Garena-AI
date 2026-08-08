@@ -1,11 +1,17 @@
 using Player.Weapons;
+using System;
 using System.Collections;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    private const string DefaultChatReply =
+        "Got it. Add more details, or confirm when the weapon description is ready.";
+
     [SerializeField] private PipelineManager pipelineManager;
     [SerializeField] private WeaponShowcaseManager weaponShowcaseManager;
+    [SerializeField, TextArea] private string placeholderChatReply =
+        DefaultChatReply;
 
     private void Start()
     {
@@ -18,13 +24,32 @@ public class GameManager : MonoBehaviour
         weaponShowcaseManager.Init();
     }
 
+    public void RequestChatReply(string input, Action<string> onReply)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            Debug.LogWarning("Cannot request a chat reply without input.", this);
+            return;
+        }
+
+        string reply = string.IsNullOrWhiteSpace(placeholderChatReply)
+            ? DefaultChatReply
+            : placeholderChatReply.Trim();
+        onReply?.Invoke(reply);
+    }
+
     /// <summary>
     /// Executes the pipelines in parallel.
     /// </summary>
-    public void ExecutePipelines()
+    public void ExecutePipelines(string input)
     {
-        // TODO: Create and populate input data for the pipelines
-        BasePipelineData inputData = new();
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            Debug.LogWarning("Cannot execute pipelines without input.");
+            return;
+        }
+
+        WeaponStatsPipelineInputData inputData = new(input);
         StartCoroutine(ExecutePipelineCoroutine(PipelineID.WeaponBuild, inputData));
     }
 

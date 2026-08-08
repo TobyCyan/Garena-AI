@@ -10,6 +10,8 @@ namespace Player.Weapons
     public class Weapon : MonoBehaviour
     {
         private const float HitMoment = 0.45f;
+        private const float HitBoxWorldScale = 0.25f;
+        private const float HitBoxForwardGap = 0.03f;
 
         [SerializeField] private string weaponName = "AI Weapon";
         [SerializeField] private WeaponCategory category = WeaponCategory.Melee;
@@ -120,9 +122,7 @@ namespace Player.Weapons
             attackActionTriggered = true;
             OnAttackAction?.Invoke(this);
 
-            Vector2 hitBoxSize = new(
-                Mathf.Max(0.05f, stats.Size.x),
-                Mathf.Max(0.05f, stats.Size.y));
+            Vector2 hitBoxSize = GetHitBoxSize();
             Collider2D[] targets = Physics2D.OverlapBoxAll(
                 GetHitBoxCenter(hitBoxSize), hitBoxSize, 0f);
             GameObject source = Core != null && Core.Root != null ? Core.Root : gameObject;
@@ -164,7 +164,7 @@ namespace Player.Weapons
 
         private Vector2 GetHitBoxCenter(Vector2 hitBoxSize)
         {
-            Vector2 localOffset = new(0.15f + hitBoxSize.x * 0.5f, 0f);
+            Vector2 localOffset = new(HitBoxForwardGap + hitBoxSize.x * 0.5f, 0f);
             Movement movement = Core != null ? Core.GetCoreComponent<Movement>() : null;
             if (movement != null)
             {
@@ -176,6 +176,13 @@ namespace Player.Weapons
             return (Vector2)transform.root.position + localOffset;
         }
 
+        private Vector2 GetHitBoxSize()
+        {
+            return new Vector2(
+                Mathf.Max(0.05f, stats.Size.x * HitBoxWorldScale),
+                Mathf.Max(0.05f, stats.Size.y * HitBoxWorldScale));
+        }
+
         private void OnDrawGizmosSelected()
         {
             if (stats == null)
@@ -183,9 +190,7 @@ namespace Player.Weapons
                 return;
             }
 
-            Vector2 hitBoxSize = new(
-                Mathf.Max(0.05f, stats.Size.x),
-                Mathf.Max(0.05f, stats.Size.y));
+            Vector2 hitBoxSize = GetHitBoxSize();
             Gizmos.color = Color.red;
             Gizmos.DrawWireCube(GetHitBoxCenter(hitBoxSize), hitBoxSize);
         }

@@ -20,6 +20,7 @@ namespace Player.Weapons
 
         public IReadOnlyList<Weapon> Weapons => weapons;
         public Weapon CurrentWeapon { get; private set; }
+        public Weapon PendingWeapon { get; private set; }
         public int CurrentIndex { get; private set; } = -1;
         public Transform WeaponSocket => weaponSocket != null ? weaponSocket : transform;
 
@@ -86,10 +87,58 @@ namespace Player.Weapons
             OnWeaponChanged?.Invoke(CurrentWeapon);
         }
 
+        public Weapon Build(WeaponDefinition definition)
+        {
+            if (definition == null)
+            {
+                return null;
+            }
+
+            DiscardPendingWeapon();
+            Weapon weapon = WeaponFactory.CreateWeapon(definition, WeaponSocket);
+            if (weapon == null)
+            {
+                return null;
+            }
+
+            ConfigureWeapon(weapon);
+            weapon.gameObject.SetActive(false);
+            PendingWeapon = weapon;
+            return weapon;
+        }
+
+        public Weapon EquipBuiltWeapon(Weapon weapon = null, int slot = -1)
+        {
+            weapon ??= PendingWeapon;
+            if (weapon == null)
+            {
+                return null;
+            }
+
+            Weapon equippedWeapon = AddAndEquip(weapon, slot);
+            if (equippedWeapon != null && weapon == PendingWeapon)
+            {
+                PendingWeapon = null;
+            }
+
+            return equippedWeapon;
+        }
+
+        public void DiscardPendingWeapon()
+        {
+            if (PendingWeapon == null)
+            {
+                return;
+            }
+
+            Destroy(PendingWeapon.gameObject);
+            PendingWeapon = null;
+        }
+
         public Weapon BuildAndEquip(WeaponDefinition definition, int slot = -1)
         {
-            Weapon weapon = WeaponFactory.CreateWeapon(definition, WeaponSocket);
-            return AddAndEquip(weapon, slot);
+            Weapon weapon = Build(definition);
+            return EquipBuiltWeapon(weapon, slot);
         }
 
         private Weapon AddAndEquip(Weapon weapon, int slot)

@@ -5,7 +5,7 @@ namespace Player.Core
 {
     public class Core : MonoBehaviour
     {
-        [field: SerializeField] public GameObject Root { get; private set; }
+        public GameObject Root { get; private set; }
 
         private readonly List<CoreComponent> components = new();
 
