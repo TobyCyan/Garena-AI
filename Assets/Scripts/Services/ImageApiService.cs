@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
+using Unity.ProjectAuditor.Editor;
 using UnityEngine;
 using UnityEngine.Networking;
 using static UnityEngine.Networking.UnityWebRequest;
@@ -19,23 +20,9 @@ public class ImageApiService
             throw new ApiException("Image prompt cannot be empty.");
         }
 
-        var requestBody = new ImageRequest
-        {
-            prompt = prompt
-        };
+        string url = $"{API_URL}?description={EscapeURL(prompt)}";
 
-        string json = JsonUtility.ToJson(requestBody);
-        byte[] body = Encoding.UTF8.GetBytes(json);
-
-        UnityWebRequest request = new(API_URL, kHttpVerbPOST)
-        {
-            uploadHandler = new UploadHandlerRaw(body),
-            downloadHandler = new DownloadHandlerBuffer()
-        };
-
-        request.SetRequestHeader(
-            "Content-Type",
-            "application/json");
+        UnityWebRequest request = Get(url);
 
         UnityWebRequestAsyncOperation operation = request.SendWebRequest();
 
@@ -84,12 +71,6 @@ public class ImageApiService
                 exception.Message);
         }
     }
-}
-
-[Serializable]
-public class ImageRequest
-{
-    public string prompt;
 }
 
 [Serializable]
