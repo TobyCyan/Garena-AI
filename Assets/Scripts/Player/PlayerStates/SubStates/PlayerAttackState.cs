@@ -1,4 +1,5 @@
 using Player.Weapons;
+using UnityEngine;
 
 namespace Player.PlayerStates
 {
@@ -6,6 +7,8 @@ namespace Player.PlayerStates
     {
         private Weapon weapon;
         private bool attackFinished;
+        private float elapsedAttackTime;
+        private float attackDuration;
 
         public PlayerAttackState(PlayerController player, PlayerStateMachine stateMachine, string animationParameter)
             : base(player, stateMachine, animationParameter)
@@ -14,9 +17,12 @@ namespace Player.PlayerStates
 
         public override void Enter()
         {
-            base.Enter();
             attackFinished = false;
+            elapsedAttackTime = 0f;
             weapon = player.ActiveWeapon;
+            attackDuration = weapon?.Data?.AttackDuration ?? 0.6f;
+            player.SetAttackAnimationDuration(attackDuration);
+            base.Enter();
             player.Movement.SetVelocityX(player.Movement.CurrentVelocity.x * player.Data.AttackMovementMultiplier);
 
             if (weapon == null)
@@ -35,6 +41,12 @@ namespace Player.PlayerStates
         public override void LogicUpdate()
         {
             base.LogicUpdate();
+            elapsedAttackTime += Time.deltaTime;
+            if (elapsedAttackTime >= attackDuration)
+            {
+                attackFinished = true;
+            }
+
             if (!attackFinished)
             {
                 return;
@@ -52,6 +64,7 @@ namespace Player.PlayerStates
             }
 
             weapon = null;
+            player.ResetAttackAnimationSpeed();
             base.Exit();
         }
 

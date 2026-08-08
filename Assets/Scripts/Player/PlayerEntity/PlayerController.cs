@@ -13,6 +13,7 @@ namespace Player
         [SerializeField] private Animator animator;
         [SerializeField] private Core.Core core;
         [SerializeField] private WeaponInventory weaponInventory;
+        [SerializeField, Min(0.01f)] private float baseAttackAnimationDuration = 0.6f;
         [SerializeField] private bool logMovementDebug = true;
 
         public PlayerData Data => playerData;
@@ -91,6 +92,22 @@ namespace Player
             if (animator != null && animator.runtimeAnimatorController != null && !string.IsNullOrWhiteSpace(parameterName))
             {
                 animator.SetBool(parameterName, value);
+            }
+        }
+
+        public void SetAttackAnimationDuration(float duration)
+        {
+            if (animator != null && animator.runtimeAnimatorController != null)
+            {
+                animator.SetFloat("attackSpeed", baseAttackAnimationDuration / Mathf.Max(0.01f, duration));
+            }
+        }
+
+        public void ResetAttackAnimationSpeed()
+        {
+            if (animator != null && animator.runtimeAnimatorController != null)
+            {
+                animator.SetFloat("attackSpeed", 1f);
             }
         }
 

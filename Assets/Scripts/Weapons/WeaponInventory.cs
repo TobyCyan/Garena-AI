@@ -10,6 +10,9 @@ namespace Player.Weapons
     public class WeaponInventory : MonoBehaviour
     {
         [SerializeField] private List<Weapon> weapons = new();
+        [SerializeField] private Transform weaponSocket;
+        [SerializeField] private Transform weaponRaised;
+        [SerializeField] private Transform weaponEnd;
         [SerializeField] private bool createFallbackWeapons = true;
         [SerializeField] private int startingWeaponIndex;
 
@@ -18,6 +21,7 @@ namespace Player.Weapons
         public IReadOnlyList<Weapon> Weapons => weapons;
         public Weapon CurrentWeapon { get; private set; }
         public int CurrentIndex { get; private set; } = -1;
+        public Transform WeaponSocket => weaponSocket != null ? weaponSocket : transform;
 
         private PlayerCore core;
 
@@ -29,14 +33,14 @@ namespace Player.Weapons
             if (weapons.Count == 0 && createFallbackWeapons)
             {
                 weapons.Add(WeaponFactory.CreateMeleeWeapon(
-                    "Practice Sword", 1, new Rect(0.3f, -0.25f, 1f, 0.5f), transform));
+                    "Practice Sword", 1, new Rect(0.3f, -0.25f, 1f, 0.5f), WeaponSocket));
                 weapons.Add(WeaponFactory.CreateMeleeWeapon(
-                    "Practice Hammer", 2, new Rect(0.2f, -0.35f, 1.25f, 0.7f), transform));
+                    "Practice Hammer", 2, new Rect(0.2f, -0.35f, 1.25f, 0.7f), WeaponSocket));
             }
 
             foreach (Weapon weapon in weapons)
             {
-                weapon?.SetCore(core);
+                ConfigureWeapon(weapon);
             }
 
             if (weapons.Count > 0)
@@ -78,18 +82,18 @@ namespace Player.Weapons
 
             CurrentIndex = index;
             CurrentWeapon = weapons[index];
-            CurrentWeapon.SetCore(core);
+            ConfigureWeapon(CurrentWeapon);
             OnWeaponChanged?.Invoke(CurrentWeapon);
         }
 
         public Weapon BuildAndEquip(WeaponDataSO data, int slot = -1)
         {
-            return AddAndEquip(WeaponFactory.CreateWeapon(data, transform), slot);
+            return AddAndEquip(WeaponFactory.CreateWeapon(data, WeaponSocket), slot);
         }
 
         public Weapon BuildAndEquip(WeaponBuildRequest request, int slot = -1)
         {
-            Weapon weapon = WeaponFactory.CreateWeapon(request, transform);
+            Weapon weapon = WeaponFactory.CreateWeapon(request, WeaponSocket);
             return AddAndEquip(weapon, slot);
         }
 
@@ -100,7 +104,7 @@ namespace Player.Weapons
                 return null;
             }
 
-            weapon.SetCore(core);
+            ConfigureWeapon(weapon);
             if (slot >= 0 && slot < weapons.Count)
             {
                 Weapon oldWeapon = weapons[slot];
@@ -130,6 +134,21 @@ namespace Player.Weapons
                 {
                     weapons.Add(childWeapon);
                 }
+            }
+        }
+
+        private void ConfigureWeapon(Weapon weapon)
+        {
+            if (weapon == null)
+            {
+                return;
+            }
+
+            weapon.SetCore(core);
+            WeaponSwingAnimator swingAnimator = weapon.GetComponent<WeaponSwingAnimator>();
+            if (swingAnimator != null)
+            {
+                swingAnimator.SetGripPath(WeaponSocket, weaponRaised, weaponEnd);
             }
         }
     }

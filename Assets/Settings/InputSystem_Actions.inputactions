@@ -315,7 +315,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Attack",
+                    "action": "Next",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
