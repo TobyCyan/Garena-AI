@@ -5,6 +5,12 @@ namespace Player.Weapons
     public class WeaponGenerator : MonoBehaviour
     {
         [SerializeField] private Transform weaponParent;
+        public static WeaponGenerator Instance;
+
+        private void Awake()
+        {
+            Instance = this;
+        }
 
         public Weapon BuildWeapon(WeaponDataSO data)
         {
