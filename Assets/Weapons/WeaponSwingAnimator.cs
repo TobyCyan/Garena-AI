@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 namespace Player.Weapons
@@ -7,24 +6,40 @@ namespace Player.Weapons
     [RequireComponent(typeof(Weapon))]
     public sealed class WeaponSwingAnimator : MonoBehaviour
     {
+        // Progress from WeaponRaised to WeaponEnd after the raised pose.
+        private static readonly float[] RaisedToEndProgress = { 0f, 0f, 0.4f, 0.8f, 1f };
+        private static readonly float[] WeaponAngles = { 130f, 130f, -25f, -45f, -45f };
+
         [SerializeField] private Transform pivot;
-        [SerializeField] private float windUpAngle = -55f;
-        [SerializeField] private float strikeAngle = 65f;
 
         private Weapon weapon;
-        private Coroutine swingRoutine;
+        private SpriteRenderer playerRenderer;
+        private SpriteRenderer[] weaponRenderers;
+        private Vector3 pivotRestLocalPosition;
+        private Transform gripStart;
+        private Transform gripRaised;
+        private Transform gripEnd;
+        private int currentPose = -1;
 
         private void Awake()
         {
             weapon = GetComponent<Weapon>();
             pivot ??= transform.Find("Base");
+            playerRenderer = transform.parent != null
+                ? transform.parent.GetComponentInParent<SpriteRenderer>()
+                : null;
+            weaponRenderers = GetComponentsInChildren<SpriteRenderer>(true);
+            pivotRestLocalPosition = pivot != null ? pivot.localPosition : Vector3.zero;
+            SetWeaponVisible(false);
         }
 
         private void OnEnable()
         {
             weapon ??= GetComponent<Weapon>();
+            weaponRenderers ??= GetComponentsInChildren<SpriteRenderer>(true);
             weapon.OnAttackStarted += HandleAttackStarted;
             weapon.OnAttackFinished += HandleAttackFinished;
+            SetWeaponVisible(weapon.IsAttacking);
         }
 
         private void OnDisable()
@@ -35,74 +50,107 @@ namespace Player.Weapons
                 weapon.OnAttackFinished -= HandleAttackFinished;
             }
 
-            StopSwing();
+            ResetPose();
+        }
+
+        private void LateUpdate()
+        {
+            if (weapon == null || !weapon.IsAttacking || playerRenderer == null)
+            {
+                return;
+            }
+
+            int pose = GetAttackPose(playerRenderer.sprite);
+            if (pose >= 0)
+            {
+                ApplyPose(pose);
+            }
         }
 
         public void SetPivot(Transform swingPivot)
         {
             pivot = swingPivot;
+            pivotRestLocalPosition = pivot != null ? pivot.localPosition : Vector3.zero;
+        }
+
+        public void SetGripPath(Transform start, Transform raised, Transform end)
+        {
+            gripStart = start;
+            gripRaised = raised;
+            gripEnd = end;
         }
 
         private void HandleAttackStarted(Weapon attackingWeapon)
         {
-            StopSwing();
-            swingRoutine = StartCoroutine(Swing(attackingWeapon.Data));
+            currentPose = -1;
+            SetWeaponVisible(true);
         }
 
         private void HandleAttackFinished(Weapon attackingWeapon)
         {
+            ResetPose();
+        }
+
+        private static int GetAttackPose(Sprite sprite)
+        {
+            if (sprite == null || !sprite.name.StartsWith("Sword_Base_"))
+            {
+                return -1;
+            }
+
+            string suffix = sprite.name.Substring("Sword_Base_".Length);
+            return int.TryParse(suffix, out int pose) && pose >= 0 && pose < RaisedToEndProgress.Length
+                ? pose
+                : -1;
+        }
+
+        private void ApplyPose(int pose)
+        {
+            currentPose = pose;
             if (pivot != null)
             {
-                pivot.localRotation = Quaternion.identity;
+                Vector2 raisedGripOffset = gripStart != null && gripRaised != null
+                    ? gripStart.InverseTransformVector(gripRaised.position - gripStart.position)
+                    : Vector2.zero;
+                Vector2 endGripOffset = gripStart != null && gripEnd != null
+                    ? gripStart.InverseTransformVector(gripEnd.position - gripStart.position)
+                    : Vector2.zero;
+
+                Vector2 poseOffset = Vector2.Lerp(
+                    raisedGripOffset,
+                    endGripOffset,
+                    RaisedToEndProgress[pose]);
+                pivot.localPosition = pivotRestLocalPosition +
+                    (Vector3)poseOffset;
+                pivot.localRotation = Quaternion.Euler(0f, 0f, WeaponAngles[pose]);
             }
         }
 
-        private IEnumerator Swing(WeaponDataSO data)
+        private void ResetPose()
         {
-            if (pivot == null || data == null)
-            {
-                yield break;
-            }
-
-            Quaternion windUp = Quaternion.Euler(0f, 0f, windUpAngle);
-            Quaternion strike = Quaternion.Euler(0f, 0f, strikeAngle);
-            pivot.localRotation = windUp;
-
-            yield return Rotate(windUp, strike, data.HitDelay);
-            yield return Rotate(strike, Quaternion.identity, data.AttackDuration - data.HitDelay);
-            swingRoutine = null;
-        }
-
-        private IEnumerator Rotate(Quaternion from, Quaternion to, float duration)
-        {
-            if (duration <= 0f)
-            {
-                pivot.localRotation = to;
-                yield break;
-            }
-
-            float elapsed = 0f;
-            while (elapsed < duration)
-            {
-                elapsed += Time.deltaTime;
-                pivot.localRotation = Quaternion.Slerp(from, to, Mathf.Clamp01(elapsed / duration));
-                yield return null;
-            }
-
-            pivot.localRotation = to;
-        }
-
-        private void StopSwing()
-        {
-            if (swingRoutine != null)
-            {
-                StopCoroutine(swingRoutine);
-                swingRoutine = null;
-            }
-
+            currentPose = -1;
             if (pivot != null)
             {
+                pivot.localPosition = pivotRestLocalPosition;
                 pivot.localRotation = Quaternion.identity;
+            }
+
+            SetWeaponVisible(false);
+        }
+
+        private void SetWeaponVisible(bool visible)
+        {
+            if (weaponRenderers == null)
+            {
+                return;
+            }
+
+            foreach (SpriteRenderer weaponRenderer in weaponRenderers)
+            {
+                if (weaponRenderer != null)
+                {
+                    weaponRenderer.enabled = visible;
+                }
             }
         }
     }

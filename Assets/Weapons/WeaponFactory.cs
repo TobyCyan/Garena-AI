@@ -21,15 +21,26 @@ namespace Player.Weapons
 
             GameObject spriteObject = new("WeaponSprite");
             spriteObject.transform.SetParent(baseObject.transform, false);
-            spriteObject.AddComponent<SpriteRenderer>();
+            SpriteRenderer weaponRenderer = spriteObject.AddComponent<SpriteRenderer>();
+            SpriteRenderer playerRenderer = parent != null
+                ? parent.GetComponentInParent<SpriteRenderer>()
+                : null;
+            if (playerRenderer != null)
+            {
+                weaponRenderer.sortingLayerID = playerRenderer.sortingLayerID;
+                weaponRenderer.sortingOrder = playerRenderer.sortingOrder + 1;
+            }
 
             Weapon weapon = root.AddComponent<Weapon>();
             weapon.SetData(data);
 
             if (data.Image != null)
             {
-                float handleOffset = Mathf.Max(0.05f, data.Image.bounds.extents.x);
-                spriteObject.transform.localPosition = new Vector3(handleOffset, 0f, 0f);
+                Bounds spriteBounds = data.Image.bounds;
+                spriteObject.transform.localPosition = new Vector3(
+                    -spriteBounds.min.x,
+                    -spriteBounds.center.y,
+                    0f);
             }
 
             if (data.AnimatorController == null)

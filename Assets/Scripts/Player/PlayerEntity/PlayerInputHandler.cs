@@ -216,6 +216,8 @@ namespace Player
             fallbackAttackAction.AddBinding("<Mouse>/leftButton");
 
             fallbackNextWeaponAction = new InputAction("Fallback Next Weapon", InputActionType.Button);
+            fallbackNextWeaponAction.AddBinding("<Keyboard>/enter");
+            fallbackNextWeaponAction.AddBinding("<Keyboard>/numpadEnter");
             fallbackNextWeaponAction.AddBinding("<Keyboard>/e");
             fallbackNextWeaponAction.AddBinding("<Keyboard>/2");
 
