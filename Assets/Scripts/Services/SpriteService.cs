@@ -16,7 +16,7 @@ public class SpriteService
             throw new ArgumentException("Prompt cannot be empty.");
         }
 
-        string prompt = request.Prompt;
+        string prompt = request.Prompt + ", Weapon Category: " + request.WeaponCategory;
 
         byte[] spriteBytes = ImageApiService
                 .GetImage(prompt)
