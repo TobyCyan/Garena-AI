@@ -49,11 +49,8 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        SpriteGeneratorPipelineInputData spriteInputData = new(input);
-        StartCoroutine(ExecutePipelineCoroutine(PipelineID.SpriteGeneration, spriteInputData));
-
-        WeaponStatGeneratorPipelineData weaponInputData = new(input);
-        StartCoroutine(ExecutePipelineCoroutine(PipelineID.WeaponStats, weaponInputData));
+        WeaponStatsPipelineInputData inputData = new(input);
+        StartCoroutine(ExecutePipelineCoroutine(PipelineID.WeaponBuild, inputData));
     }
 
     private IEnumerator ExecutePipelineCoroutine(PipelineID id, BasePipelineData input)

@@ -1,130 +1,80 @@
 using System;
-using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
+using static UnityEngine.Networking.UnityWebRequest;
 
 /// <summary>
-/// Generates an image through the OpenAI Images API
-/// and returns the encoded image file as bytes.
+/// Calls the backend to generate weapon sprite images based on a prompt.
 /// </summary>
 public class ImageApiService
 {
-    private const string API_URL =
-        "https://api.openai.com/v1/images/generations";
-    private const string DEFAULT_RESOLUTION = "32x32";
-    private const string DEFAULT_FORMAT = "png";
-    public static ImageApiService Instance { get; } = new();
+    private const string API_URL = Config.BACKEND_API_URL + "/weapon/sprite/";
 
-    private static string ApiKey =>
-        Environment.GetEnvironmentVariable("OPENAI_API_KEY")
-        ?? throw new InvalidOperationException(
-            "OPENAI_API_KEY environment variable is not set.");
-
-    public async Task<byte[]> GetImage(string prompt)
+    public static async Task<byte[]> GetImage(string prompt)
     {
         if (string.IsNullOrWhiteSpace(prompt))
         {
             throw new ApiException("Image prompt cannot be empty.");
         }
 
-        var requestBody = new OpenAIImageRequest
-        {
-            model = "gpt-image-2",
-            prompt = prompt,
-            size = DEFAULT_RESOLUTION,
-            quality = "low",
-            output_format = DEFAULT_FORMAT
-        };
+        string url = $"{API_URL}?description={EscapeURL(prompt)}";
 
-        string json = JsonUtility.ToJson(requestBody);
-        byte[] body = Encoding.UTF8.GetBytes(json);
+        UnityWebRequest request = Get(url);
 
-        using UnityWebRequest request = new(
-            API_URL,
-            UnityWebRequest.kHttpVerbPOST);
-
-        request.uploadHandler = new UploadHandlerRaw(body);
-        request.downloadHandler = new DownloadHandlerBuffer();
-
-        request.SetRequestHeader(
-            "Content-Type",
-            "application/json");
-
-        request.SetRequestHeader(
-            "Authorization",
-            $"Bearer {ApiKey}");
-
-        UnityWebRequestAsyncOperation operation =
-            request.SendWebRequest();
+        UnityWebRequestAsyncOperation operation = request.SendWebRequest();
 
         while (!operation.isDone)
         {
             await Task.Yield();
         }
 
-        if (request.result != UnityWebRequest.Result.Success)
+        if (request.result != Result.Success)
         {
             throw new ApiException(
-                $"OpenAI image request failed " +
+                $"Image backend request failed " +
                 $"({request.responseCode}): " +
                 request.downloadHandler.text);
         }
 
-        OpenAIImageResponse response;
+        ImageResponse response;
 
         try
         {
-            response = JsonUtility.FromJson<OpenAIImageResponse>(
+            response = JsonUtility.FromJson<ImageResponse>(
                 request.downloadHandler.text);
         }
         catch (Exception exception)
         {
             throw new ApiException(
-                $"Could not parse image response: {exception.Message}");
+                $"Could not parse image response: " +
+                $"{exception.Message}");
         }
 
-        if (response?.data == null ||
-            response.data.Length == 0 ||
-            string.IsNullOrWhiteSpace(response.data[0].b64_json))
+        if (response == null ||
+            string.IsNullOrWhiteSpace(response.imageBase64))
         {
             throw new ApiException(
-                "OpenAI did not return image data.");
+                "Backend did not return image data.");
         }
 
         try
         {
-            return Convert.FromBase64String(
-                response.data[0].b64_json);
+            return Convert.FromBase64String(response.imageBase64);
         }
         catch (FormatException exception)
         {
             throw new ApiException(
-                $"OpenAI returned invalid Base64 image data: " +
+                $"Backend returned invalid Base64 image data: " +
                 exception.Message);
         }
     }
 }
 
 [Serializable]
-public class OpenAIImageRequest
+public class ImageResponse
 {
-    public string model;
-    public string prompt;
-    public string size;
-    public string quality;
-    public string output_format;
-}
-
-[Serializable]
-public class OpenAIImageResponse
-{
-    public long created;
-    public OpenAIImageData[] data;
-}
-
-[Serializable]
-public class OpenAIImageData
-{
-    public string b64_json;
+    public string message;
+    public string mimeType;
+    public string imageBase64;
 }

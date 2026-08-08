@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using static UnityEngine.Object;
 
-public class SpriteGenerationService
+public class SpriteService
 {
     public static Sprite GenerateSprite(SpriteGenerationRequest request)
     {
@@ -16,9 +16,9 @@ public class SpriteGenerationService
             throw new ArgumentException("Prompt cannot be empty.");
         }
 
-        string prompt = request.Prompt;
+        string prompt = request.Prompt + ", Weapon Category: " + request.WeaponCategory;
 
-        byte[] spriteBytes = ImageApiService.Instance
+        byte[] spriteBytes = ImageApiService
                 .GetImage(prompt)
                 .GetAwaiter()
                 .GetResult();
