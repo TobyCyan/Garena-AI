@@ -11,7 +11,7 @@ namespace Player
     {
         [SerializeField] private PlayerData playerData;
         [SerializeField] private Animator animator;
-        [SerializeField] private Core.Core core;
+        private Core.Core core;
         [SerializeField] private WeaponInventory weaponInventory;
         [SerializeField, Min(0.01f)] private float baseAttackAnimationDuration = 0.6f;
         [SerializeField] private bool logMovementDebug = true;

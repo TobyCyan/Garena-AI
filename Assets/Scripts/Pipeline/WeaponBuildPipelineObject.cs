@@ -19,10 +19,10 @@ public class WeaponBuildPipelineObject : IPipelineObject
             Object.FindAnyObjectByType<global::Player.PlayerController>();
         if (player == null || player.WeaponInventory == null)
         {
-            throw new PipelineException("A player with a WeaponInventory is required to build and equip a weapon.");
+            throw new PipelineException("A player with a WeaponInventory is required to build a weapon.");
         }
 
-        Weapon weapon = player.WeaponInventory.BuildAndEquip(definition);
+        Weapon weapon = player.WeaponInventory.Build(definition);
         return new WeaponBuildPipelineResultData(weapon);
     }
 }

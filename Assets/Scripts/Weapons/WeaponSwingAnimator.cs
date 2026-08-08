@@ -136,14 +136,22 @@ namespace Player.Weapons
                 Vector2 raisedGripOffset = gripStart != null && gripRaised != null
                     ? gripStart.InverseTransformVector(gripRaised.position - gripStart.position)
                     : Vector2.zero;
+            
                 Vector2 endGripOffset = gripStart != null && gripEnd != null
                     ? gripStart.InverseTransformVector(gripEnd.position - gripStart.position)
                     : Vector2.zero;
+
+                Vector2 raisedCompensation = new Vector2(0.254f, -0.314f);
+                Vector2 endCompensation = new Vector2(-0.631f, 0.661f);
+
+                raisedGripOffset += raisedCompensation;
+                endGripOffset += endCompensation;
 
                 Vector2 poseOffset = Vector2.Lerp(
                     raisedGripOffset,
                     endGripOffset,
                     RaisedToEndProgress[pose]);
+            
                 pivot.localPosition = pivotRestLocalPosition + (Vector3)poseOffset;
                 pivot.localRotation = Quaternion.Euler(0f, 0f, WeaponAngles[pose]);
             }

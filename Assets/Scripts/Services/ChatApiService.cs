@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 /// <summary>
 /// Api service to ChatGPT to return text only.
 /// </summary>
-public class ChatApiService
+public class ChatApiService : ITextApiService
 {
     private const string API_URL = "https://api.openai.com/v1/responses";
 
