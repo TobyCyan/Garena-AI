@@ -1,10 +1,33 @@
+using Player.Weapons;
+using System;
+using UnityEngine;
+
 public class WeaponStatGeneratorService
 {
-    public static string GenerateWeaponStats(string prompt)
+    public static WeaponStats GenerateWeaponStats(string prompt)
     {
         string weaponResult = ChatApiService.Instance.GetResponse(prompt)
                     .GetAwaiter()
                     .GetResult();
-        return weaponResult;
+        return ParseToStats(weaponResult);
+    }
+
+    private static WeaponStats ParseToStats(string weaponResult)
+    {
+        if (string.IsNullOrWhiteSpace(weaponResult))
+        {
+            throw new InvalidOperationException(
+                "Weapon stat generation returned an empty response.");
+        }
+
+        try
+        {
+            return JsonUtility.FromJson<WeaponStats>(weaponResult);
+        }
+        catch (Exception e)
+        {
+            throw new InvalidOperationException(
+                $"Failed to parse weapon stats: {weaponResult}", e);
+        }
     }
 }

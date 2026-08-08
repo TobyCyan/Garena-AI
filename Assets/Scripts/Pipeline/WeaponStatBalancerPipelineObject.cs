@@ -1,3 +1,5 @@
+using Player.Weapons;
+
 public class WeaponStatBalancerPipelineObject : IPipelineObject
 {
     public BasePipelineData DoPipe(BasePipelineData input)
@@ -6,7 +8,7 @@ public class WeaponStatBalancerPipelineObject : IPipelineObject
         {
             throw new PipelineException("Input data must be of type WeaponStatBalancerPipelineInputData.");
         }
-        var balancedStats = WeaponBalancerService.BalanceWeapon(data.Weapon);
+        WeaponStats balancedStats = WeaponBalancerService.BalanceWeapon(data.WeaponStats);
         return new WeaponStatBalancerPipelineData(balancedStats);
     }
 }
