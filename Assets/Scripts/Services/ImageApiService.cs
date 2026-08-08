@@ -1,7 +1,5 @@
 using System;
-using System.Text;
 using System.Threading.Tasks;
-using Unity.ProjectAuditor.Editor;
 using UnityEngine;
 using UnityEngine.Networking;
 using static UnityEngine.Networking.UnityWebRequest;
