@@ -1,9 +1,6 @@
-using UnityEngine;
+using Player.Weapons;
 
 public class WeaponBuildRequestPipelineData : BasePipelineData
 {
-    public int Damage { get; set; }
-    public Vector2 Size { get; set; }
-    public float Speed { get; set; }
-    public Sprite Image { get; set; }
+    public WeaponDefinition Weapon { get; set; } = new();
 }

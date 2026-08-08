@@ -6,13 +6,13 @@ namespace Player.Weapons
     {
         public int Amount { get; }
         public GameObject Source { get; }
-        public WeaponDataSO WeaponData { get; }
+        public Weapon Weapon { get; }
 
-        public DamageData(int amount, GameObject source, WeaponDataSO weaponData)
+        public DamageData(int amount, GameObject source, Weapon weapon)
         {
             Amount = amount;
             Source = source;
-            WeaponData = weaponData;
+            Weapon = weapon;
         }
     }
 }

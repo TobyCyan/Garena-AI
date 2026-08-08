@@ -4,20 +4,18 @@ namespace Player.Weapons
 {
     public static class WeaponFactory
     {
-        public static Weapon CreateWeapon(WeaponDataSO data, Transform parent)
+        public static Weapon CreateWeapon(WeaponDefinition definition, Transform parent)
         {
-            if (data == null)
+            if (definition == null)
             {
                 return null;
             }
 
-            GameObject root = new(data.WeaponName);
+            GameObject root = new(definition.Name);
             root.transform.SetParent(parent, false);
 
             GameObject baseObject = new("Base");
             baseObject.transform.SetParent(root.transform, false);
-            baseObject.AddComponent<Animator>();
-            baseObject.AddComponent<AnimationEventHandler>();
 
             GameObject spriteObject = new("WeaponSprite");
             spriteObject.transform.SetParent(baseObject.transform, false);
@@ -32,40 +30,31 @@ namespace Player.Weapons
             }
 
             Weapon weapon = root.AddComponent<Weapon>();
-            weapon.SetData(data);
+            weapon.Configure(definition);
 
-            if (data.Image != null)
+            if (definition.Image != null)
             {
-                Bounds spriteBounds = data.Image.bounds;
+                Bounds spriteBounds = definition.Image.bounds;
                 spriteObject.transform.localPosition = new Vector3(
                     -spriteBounds.min.x,
                     -spriteBounds.center.y,
                     0f);
             }
 
-            if (data.AnimatorController == null)
-            {
-                WeaponSwingAnimator swingAnimator = root.AddComponent<WeaponSwingAnimator>();
-                swingAnimator.SetPivot(baseObject.transform);
-            }
-
+            WeaponSwingAnimator swingAnimator = root.AddComponent<WeaponSwingAnimator>();
+            swingAnimator.SetPivot(baseObject.transform);
             return weapon;
         }
 
-        public static Weapon CreateWeapon(WeaponBuildRequest request, Transform parent)
+        public static Weapon CreateMeleeWeapon(
+            string name,
+            Sprite image,
+            WeaponStats stats,
+            Transform parent)
         {
-            return CreateWeapon(WeaponDataSO.CreateRuntime(request), parent);
-        }
-
-        public static Weapon CreateMeleeWeapon(string displayName, int damage, Rect hitBox, Transform parent)
-        {
-            WeaponDataSO data = WeaponDataSO.CreateRuntimeMelee(displayName, damage, hitBox);
-            return CreateWeapon(data, parent);
-        }
-
-        public static Weapon CreateMeleeWeapon(Sprite image, int damage, Vector2 size, float speed, Transform parent)
-        {
-            return CreateWeapon(new WeaponBuildRequest(image, damage, size, speed), parent);
+            return CreateWeapon(
+                new WeaponDefinition(name, WeaponCategory.Melee, image, stats),
+                parent);
         }
     }
 }

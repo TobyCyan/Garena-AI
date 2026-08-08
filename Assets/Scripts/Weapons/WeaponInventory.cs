@@ -33,9 +33,9 @@ namespace Player.Weapons
             if (weapons.Count == 0 && createFallbackWeapons)
             {
                 weapons.Add(WeaponFactory.CreateMeleeWeapon(
-                    "Practice Sword", 1, new Rect(0.3f, -0.25f, 1f, 0.5f), WeaponSocket));
+                    "Practice Sword", null, new WeaponStats(1, new Vector2(1f, 0.5f), 1.6666667f), WeaponSocket));
                 weapons.Add(WeaponFactory.CreateMeleeWeapon(
-                    "Practice Hammer", 2, new Rect(0.2f, -0.35f, 1.25f, 0.7f), WeaponSocket));
+                    "Practice Hammer", null, new WeaponStats(2, new Vector2(1.25f, 0.7f), 1.25f), WeaponSocket));
             }
 
             foreach (Weapon weapon in weapons)
@@ -86,14 +86,9 @@ namespace Player.Weapons
             OnWeaponChanged?.Invoke(CurrentWeapon);
         }
 
-        public Weapon BuildAndEquip(WeaponDataSO data, int slot = -1)
+        public Weapon BuildAndEquip(WeaponDefinition definition, int slot = -1)
         {
-            return AddAndEquip(WeaponFactory.CreateWeapon(data, WeaponSocket), slot);
-        }
-
-        public Weapon BuildAndEquip(WeaponBuildRequest request, int slot = -1)
-        {
-            Weapon weapon = WeaponFactory.CreateWeapon(request, WeaponSocket);
+            Weapon weapon = WeaponFactory.CreateWeapon(definition, WeaponSocket);
             return AddAndEquip(weapon, slot);
         }
 

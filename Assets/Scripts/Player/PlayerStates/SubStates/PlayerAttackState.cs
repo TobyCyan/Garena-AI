@@ -20,7 +20,7 @@ namespace Player.PlayerStates
             attackFinished = false;
             elapsedAttackTime = 0f;
             weapon = player.ActiveWeapon;
-            attackDuration = weapon?.Data?.AttackDuration ?? 0.6f;
+            attackDuration = weapon?.AttackDuration ?? 0.6f;
             player.SetAttackAnimationDuration(attackDuration);
             base.Enter();
             player.Movement.SetVelocityX(player.Movement.CurrentVelocity.x * player.Data.AttackMovementMultiplier);
@@ -42,7 +42,7 @@ namespace Player.PlayerStates
         {
             base.LogicUpdate();
             elapsedAttackTime += Time.deltaTime;
-            if (elapsedAttackTime >= attackDuration)
+            if (elapsedAttackTime >= attackDuration + 0.1f)
             {
                 attackFinished = true;
             }
