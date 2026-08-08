@@ -3,7 +3,12 @@ using UnityEngine;
 
 public class PipelineManager : MonoBehaviour
 {
-    private readonly Dictionary<PipelineID, Pipeline> pipelines;
+    private readonly Dictionary<PipelineID, Pipeline> pipelines = new();
+
+    private void Awake()
+    {
+        Init();
+    }
 
     public void Init()
     {

@@ -8,10 +8,10 @@ namespace Player.Weapons
     [RequireComponent(typeof(global::Player.PlayerController))]
     public sealed class WeaponSwapTester : MonoBehaviour
     {
-        [SerializeField] private List<WeaponBuildRequest> testWeapons = new()
+        [SerializeField] private List<WeaponDefinition> testWeapons = new()
         {
-            new WeaponBuildRequest(),
-            new WeaponBuildRequest()
+            new WeaponDefinition(),
+            new WeaponDefinition()
         };
         [SerializeField] private int startingSlot;
 
@@ -45,14 +45,14 @@ namespace Player.Weapons
             int builtCount = 0;
             for (int i = 0; i < testWeapons.Count; i++)
             {
-                WeaponBuildRequest request = testWeapons[i];
-                if (request == null || request.Image == null)
+                WeaponDefinition definition = testWeapons[i];
+                if (definition == null || definition.Image == null)
                 {
                     Debug.LogWarning($"[WeaponSwapTester] Slot {i} has no weapon image and was skipped.", this);
                     continue;
                 }
 
-                if (player.WeaponInventory.BuildAndEquip(request, i) != null)
+                if (player.WeaponInventory.BuildAndEquip(definition, i) != null)
                 {
                     builtCount++;
                 }

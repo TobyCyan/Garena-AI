@@ -6,7 +6,6 @@ namespace Player.Weapons
     [RequireComponent(typeof(Weapon))]
     public sealed class WeaponSwingAnimator : MonoBehaviour
     {
-        // Progress from WeaponRaised to WeaponEnd after the raised pose.
         private static readonly float[] RaisedToEndProgress = { 0f, 0f, 0.4f, 0.8f, 1f };
         private static readonly float[] WeaponAngles = { 130f, 130f, -25f, -45f, -45f };
 
@@ -44,27 +43,52 @@ namespace Player.Weapons
 
         private void OnDisable()
         {
+            SetWeaponVisible(false);
+            currentPose = -1;
+
             if (weapon != null)
             {
                 weapon.OnAttackStarted -= HandleAttackStarted;
                 weapon.OnAttackFinished -= HandleAttackFinished;
             }
-
-            ResetPose();
         }
 
         private void LateUpdate()
         {
             if (weapon == null || !weapon.IsAttacking || playerRenderer == null)
             {
+                SetWeaponVisible(false);
                 return;
             }
 
             int pose = GetAttackPose(playerRenderer.sprite);
-            if (pose >= 0)
+            if (pose < 0)
             {
-                ApplyPose(pose);
+                SetWeaponVisible(false);
+                return;
             }
+
+            if (currentPose == -1 && pose >= 3)
+            {
+                SetWeaponVisible(false);
+                return;
+            }
+
+            if (currentPose >= 0 && pose < currentPose)
+            {
+                SetWeaponVisible(false);
+                return;
+            }
+
+            if (pose >= 3)
+            {
+                SetWeaponVisible(false);
+                currentPose = pose;
+                return;
+            }
+
+            ApplyPose(pose);
+            SetWeaponVisible(true);
         }
 
         public void SetPivot(Transform swingPivot)
@@ -82,13 +106,13 @@ namespace Player.Weapons
 
         private void HandleAttackStarted(Weapon attackingWeapon)
         {
+            SetWeaponVisible(false);
             currentPose = -1;
-            SetWeaponVisible(true);
         }
 
         private void HandleAttackFinished(Weapon attackingWeapon)
         {
-            ResetPose();
+            SetWeaponVisible(false);
         }
 
         private static int GetAttackPose(Sprite sprite)
@@ -120,22 +144,9 @@ namespace Player.Weapons
                     raisedGripOffset,
                     endGripOffset,
                     RaisedToEndProgress[pose]);
-                pivot.localPosition = pivotRestLocalPosition +
-                    (Vector3)poseOffset;
+                pivot.localPosition = pivotRestLocalPosition + (Vector3)poseOffset;
                 pivot.localRotation = Quaternion.Euler(0f, 0f, WeaponAngles[pose]);
             }
-        }
-
-        private void ResetPose()
-        {
-            currentPose = -1;
-            if (pivot != null)
-            {
-                pivot.localPosition = pivotRestLocalPosition;
-                pivot.localRotation = Quaternion.identity;
-            }
-
-            SetWeaponVisible(false);
         }
 
         private void SetWeaponVisible(bool visible)

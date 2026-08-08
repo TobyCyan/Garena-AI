@@ -401,14 +401,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game::Player.Weapons.WeaponSwapTester
   testWeapons:
-  - Image: {fileID: 621078435, guid: 3179c16b297295440b9749aff89377e2, type: 3}
-    Damage: 1
-    Size: {x: 1, y: 1}
-    Speed: 1.6666667
-  - Image: {fileID: 1335786267, guid: 3f6ae8b3fa4b36e48b63b3edc225fda0, type: 3}
-    Damage: 1
-    Size: {x: 1, y: 1}
-    Speed: 1.6666667
+  - Name: Test Sword
+    Category: 0
+    Image: {fileID: 621078435, guid: 3179c16b297295440b9749aff89377e2, type: 3}
+    Stats:
+      Damage: 1
+      Size: {x: 1, y: 1}
+      Speed: 1.6666667
+  - Name: Test Blade
+    Category: 0
+    Image: {fileID: 1335786267, guid: 3f6ae8b3fa4b36e48b63b3edc225fda0, type: 3}
+    Stats:
+      Damage: 1
+      Size: {x: 1, y: 1}
+      Speed: 1.6666667
   startingSlot: 0
 --- !u!1001 &8324938234689390434
 PrefabInstance:

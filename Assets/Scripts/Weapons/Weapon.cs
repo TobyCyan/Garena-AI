@@ -9,8 +9,12 @@ namespace Player.Weapons
 {
     public class Weapon : MonoBehaviour
     {
-        [SerializeField] private WeaponDataSO data;
-        [SerializeField] private GameObject baseObject;
+        private const float HitMoment = 0.45f;
+
+        [SerializeField] private string weaponName = "AI Weapon";
+        [SerializeField] private WeaponCategory category = WeaponCategory.Melee;
+        [SerializeField] private Sprite image;
+        [SerializeField] private WeaponStats stats = new();
         [SerializeField] private SpriteRenderer weaponRenderer;
 
         public event Action<Weapon> OnAttackStarted;
@@ -18,34 +22,27 @@ namespace Player.Weapons
         public event Action<Weapon> OnAttackFinished;
         public event Action<Weapon, Collider2D> OnHit;
 
-        public WeaponDataSO Data => data;
+        public string WeaponName => weaponName;
+        public WeaponCategory Category => category;
+        public Sprite Image => image;
+        public WeaponStats Stats => stats;
         public PlayerCore Core { get; private set; }
-        public Animator Animator { get; private set; }
         public bool IsAttacking { get; private set; }
-        public bool CanEnterAttack => data != null && !IsAttacking && Time.time >= nextAttackTime;
-        public int AttackCounter { get; private set; }
+        public bool CanEnterAttack => stats != null && !IsAttacking;
+        public float AttackDuration => 1f / Mathf.Max(0.1f, stats?.Speed ?? 1f);
 
         private readonly HashSet<Collider2D> hitTargets = new();
-        private AnimationEventHandler eventHandler;
         private Coroutine attackRoutine;
-        private float nextAttackTime;
         private bool attackActionTriggered;
-        private bool attackFinishedTriggered;
 
         private void Awake()
         {
-            ResolveDependencies();
-            ApplyData();
-        }
-
-        private void OnEnable()
-        {
-            BindAnimationEvents(true);
+            weaponRenderer ??= GetComponentInChildren<SpriteRenderer>(true);
+            ApplyPresentation();
         }
 
         private void OnDisable()
         {
-            BindAnimationEvents(false);
             if (attackRoutine != null)
             {
                 StopCoroutine(attackRoutine);
@@ -55,17 +52,26 @@ namespace Player.Weapons
             IsAttacking = false;
         }
 
+        public void Configure(WeaponDefinition definition)
+        {
+            if (definition == null)
+            {
+                return;
+            }
+
+            weaponName = string.IsNullOrWhiteSpace(definition.Name)
+                ? "AI Weapon"
+                : definition.Name;
+            category = definition.Category;
+            image = definition.Image;
+            stats = definition.Stats?.CopySanitized() ?? new WeaponStats();
+            weaponRenderer ??= GetComponentInChildren<SpriteRenderer>(true);
+            ApplyPresentation();
+        }
+
         public void SetCore(PlayerCore core)
         {
             Core = core;
-        }
-
-        public void SetData(WeaponDataSO weaponData)
-        {
-            data = weaponData;
-            ResolveDependencies();
-            ApplyData();
-            AttackCounter = 0;
         }
 
         public bool Attack()
@@ -77,15 +83,7 @@ namespace Player.Weapons
 
             IsAttacking = true;
             attackActionTriggered = false;
-            attackFinishedTriggered = false;
             hitTargets.Clear();
-
-            if (Animator != null && Animator.runtimeAnimatorController != null)
-            {
-                Animator.SetInteger("counter", AttackCounter);
-                Animator.SetTrigger("attack");
-            }
-
             OnAttackStarted?.Invoke(this);
             attackRoutine = StartCoroutine(AttackRoutine());
             return true;
@@ -93,26 +91,23 @@ namespace Player.Weapons
 
         private IEnumerator AttackRoutine()
         {
-            if (data.HitDelay > 0f)
+            float duration = AttackDuration;
+            float hitDelay = duration * HitMoment;
+
+            if (hitDelay > 0f)
             {
-                yield return new WaitForSeconds(data.HitDelay);
+                yield return new WaitForSeconds(hitDelay);
             }
 
-            if (!attackActionTriggered)
-            {
-                PerformAttackAction();
-            }
+            PerformAttackAction();
 
-            float remainingDuration = Mathf.Max(0f, data.AttackDuration - data.HitDelay);
+            float remainingDuration = duration - hitDelay;
             if (remainingDuration > 0f)
             {
                 yield return new WaitForSeconds(remainingDuration);
             }
 
-            if (!attackFinishedTriggered)
-            {
-                FinishAttack();
-            }
+            FinishAttack();
         }
 
         private void PerformAttackAction()
@@ -125,8 +120,11 @@ namespace Player.Weapons
             attackActionTriggered = true;
             OnAttackAction?.Invoke(this);
 
-            Vector2 center = GetHitBoxCenter();
-            Collider2D[] targets = Physics2D.OverlapBoxAll(center, data.HitBox.size, 0f, data.TargetLayers);
+            Vector2 hitBoxSize = new(
+                Mathf.Max(0.05f, stats.Size.x),
+                Mathf.Max(0.05f, stats.Size.y));
+            Collider2D[] targets = Physics2D.OverlapBoxAll(
+                GetHitBoxCenter(hitBoxSize), hitBoxSize, 0f);
             GameObject source = Core != null && Core.Root != null ? Core.Root : gameObject;
 
             foreach (Collider2D target in targets)
@@ -137,96 +135,59 @@ namespace Player.Weapons
                 }
 
                 IDamageable damageable = target.GetComponentInParent<IDamageable>();
-                damageable?.TakeDamage(new DamageData(data.Damage, source, data));
+                damageable?.TakeDamage(new DamageData(stats.Damage, source, this));
                 OnHit?.Invoke(this, target);
             }
         }
 
         private void FinishAttack()
         {
-            if (!IsAttacking || attackFinishedTriggered)
+            if (!IsAttacking)
             {
                 return;
             }
 
-            attackFinishedTriggered = true;
             IsAttacking = false;
             attackRoutine = null;
-            nextAttackTime = Time.time + data.AttackCooldown;
-            AttackCounter = (AttackCounter + 1) % Mathf.Max(1, data.NumberOfAttacks);
             OnAttackFinished?.Invoke(this);
         }
 
-        private void ResolveDependencies()
+        private void ApplyPresentation()
         {
-            baseObject ??= transform.Find("Base")?.gameObject ?? gameObject;
-            Animator = baseObject.GetComponent<Animator>();
-            eventHandler = baseObject.GetComponent<AnimationEventHandler>();
-            weaponRenderer ??= GetComponentInChildren<SpriteRenderer>(true);
-        }
-
-        private void ApplyData()
-        {
-            if (data == null)
-            {
-                return;
-            }
-
-            if (Animator != null)
-            {
-                Animator.runtimeAnimatorController = data.AnimatorController;
-            }
-
             if (weaponRenderer != null)
             {
-                weaponRenderer.sprite = data.WeaponSprite;
+                weaponRenderer.sprite = image;
             }
 
-            gameObject.name = data.WeaponName;
+            gameObject.name = weaponName;
         }
 
-        private void BindAnimationEvents(bool bind)
+        private Vector2 GetHitBoxCenter(Vector2 hitBoxSize)
         {
-            if (eventHandler == null)
-            {
-                return;
-            }
-
-            if (bind)
-            {
-                eventHandler.AttackAction += PerformAttackAction;
-                eventHandler.AttackFinished += FinishAttack;
-            }
-            else
-            {
-                eventHandler.AttackAction -= PerformAttackAction;
-                eventHandler.AttackFinished -= FinishAttack;
-            }
-        }
-
-        private Vector2 GetHitBoxCenter()
-        {
+            Vector2 localOffset = new(0.15f + hitBoxSize.x * 0.5f, 0f);
             Movement movement = Core != null ? Core.GetCoreComponent<Movement>() : null;
             if (movement != null)
             {
-                return movement.GetWorldPoint(data.HitBox.center);
+                return movement.GetWorldPoint(localOffset);
             }
 
             int facing = transform.root.localScale.x >= 0f ? 1 : -1;
-            Vector2 offset = data.HitBox.center;
-            offset.x *= facing;
-            return (Vector2)transform.root.position + offset;
+            localOffset.x *= facing;
+            return (Vector2)transform.root.position + localOffset;
         }
 
         private void OnDrawGizmosSelected()
         {
-            if (data == null || !data.DrawDebugHitBox)
+            if (stats == null)
             {
                 return;
             }
 
+            Vector2 hitBoxSize = new(
+                Mathf.Max(0.05f, stats.Size.x),
+                Mathf.Max(0.05f, stats.Size.y));
             Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(GetHitBoxCenter(), data.HitBox.size);
+            Gizmos.DrawWireCube(GetHitBoxCenter(hitBoxSize), hitBoxSize);
         }
     }
 }
