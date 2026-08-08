@@ -54,7 +54,20 @@ public class PipelineManager : MonoBehaviour
             return null;
         }
 
-        return pipeline.Pipe(input);
+        try
+        {
+            return pipeline.Pipe(input);
+        }
+        catch (PipelineException ex)
+        {
+            Debug.LogError($"Pipeline {id} execution failed: {ex.Message}");
+            return null;
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Pipeline {id} execution encountered an unexpected error: {ex.Message}");
+            return null;
+        }
     }
 }
 
