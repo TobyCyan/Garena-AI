@@ -14,6 +14,7 @@ public class ImageApiService : IImageApiService
         "https://api.openai.com/v1/images/generations";
     private const string DEFAULT_RESOLUTION = "32x32";
     private const string DEFAULT_FORMAT = "png";
+    public static ImageApiService Instance { get; } = new();
 
     private static string ApiKey =>
         Environment.GetEnvironmentVariable("OPENAI_API_KEY")

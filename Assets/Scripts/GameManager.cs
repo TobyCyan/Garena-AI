@@ -31,7 +31,8 @@ public class GameManager : MonoBehaviour
     private IEnumerator ExecutePipelineCoroutine(PipelineID id, BasePipelineData input)
     {
         yield return null;
-        BasePipelineData output = pipelineManager.ExecutePipeline(id, input);
+        BasePipelineData output = pipelineManager.ExecutePipeline
+            (id, input);
         HandlePipelineResults(output);
     }
 
