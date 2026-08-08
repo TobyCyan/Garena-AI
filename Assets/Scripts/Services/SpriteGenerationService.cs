@@ -18,7 +18,7 @@ public class SpriteGenerationService
 
         string prompt = request.Prompt;
 
-        byte[] spriteBytes = ImageApiService.Instance
+        byte[] spriteBytes = ImageApiService
                 .GetImage(prompt)
                 .GetAwaiter()
                 .GetResult();
