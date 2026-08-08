@@ -24,11 +24,8 @@ public class GameManager : MonoBehaviour
     public void ExecutePipelines()
     {
         // TODO: Create and populate input data for the pipelines
-        BasePipelineData spriteInputData = new();
-        StartCoroutine(ExecutePipelineCoroutine(PipelineID.SpriteGeneration, spriteInputData));
-
-        BasePipelineData weaponInputData = new();
-        StartCoroutine(ExecutePipelineCoroutine(PipelineID.WeaponStats, weaponInputData));
+        BasePipelineData inputData = new();
+        StartCoroutine(ExecutePipelineCoroutine(PipelineID.WeaponBuild, inputData));
     }
 
     private IEnumerator ExecutePipelineCoroutine(PipelineID id, BasePipelineData input)

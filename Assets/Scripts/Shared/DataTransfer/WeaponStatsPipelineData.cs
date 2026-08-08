@@ -2,10 +2,10 @@ using Player.Weapons;
 
 public class WeaponStatsPipelineData : BasePipelineData
 {
-    public WeaponStats WeaponStats { get; }
+    public WeaponStatsData WeaponStatsData { get; }
 
-    public WeaponStatsPipelineData(WeaponStats weaponStats)
+    public WeaponStatsPipelineData(WeaponStatsData weaponStatsData)
     {
-        WeaponStats = weaponStats;
+        WeaponStatsData = weaponStatsData;
     }
 }
