@@ -8,7 +8,7 @@ public class WeaponStatBalancerPipelineObject : IPipelineObject
         {
             throw new PipelineException("Input data must be of type WeaponStatBalancerPipelineInputData.");
         }
-        WeaponStats balancedStats = WeaponBalancerService.BalanceWeapon(data.WeaponStats);
+        WeaponStats balancedStats = WeaponStatsService.BalanceWeaponStats(data.WeaponStats);
         return new WeaponStatBalancerPipelineData(balancedStats);
     }
 }

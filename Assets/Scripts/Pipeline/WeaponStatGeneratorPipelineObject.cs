@@ -8,7 +8,7 @@ public class WeaponStatGeneratorPipelineObject : IPipelineObject
         {
             throw new PipelineException("Input data must be of type WeaponStatGeneratorPipelineData.");
         }
-        WeaponStats generatedStats = WeaponStatGeneratorService.GenerateWeaponStats(data.Prompt);
+        WeaponStats generatedStats = WeaponStatsService.GenerateWeaponStats(data.Prompt);
         return new WeaponStatBalancerPipelineData(generatedStats);
     }
 }

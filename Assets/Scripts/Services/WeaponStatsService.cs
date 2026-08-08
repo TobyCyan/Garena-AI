@@ -2,7 +2,7 @@ using Player.Weapons;
 using System;
 using UnityEngine;
 
-public class WeaponStatGeneratorService
+public class WeaponStatsService
 {
     public static WeaponStats GenerateWeaponStats(string prompt)
     {
@@ -30,5 +30,11 @@ public class WeaponStatGeneratorService
             throw new InvalidOperationException(
                 $"Failed to parse weapon stats: {weaponResult}", e);
         }
+    }
+
+    public static WeaponStats BalanceWeaponStats(WeaponStats weaponStats)
+    {
+        // Implement weapon balancing logic here
+        return weaponStats;
     }
 }
