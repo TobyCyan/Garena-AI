@@ -6,7 +6,8 @@ public class WeaponStatGeneratorService
 {
     public static WeaponStats GenerateWeaponStats(string prompt)
     {
-        string weaponResult = ChatApiService.Instance.GetResponse(prompt)
+        string weaponResult = StatsApiService
+                    .GetStats(prompt)
                     .GetAwaiter()
                     .GetResult();
         return ParseToStats(weaponResult);
