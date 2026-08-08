@@ -14,8 +14,7 @@ public class PipelineManager : MonoBehaviour
     {
         RegisterPipeline(
             PipelineID.WeaponStats,
-            new WeaponStatGeneratorPipelineObject(),
-            new WeaponStatBalancerPipelineObject()
+            new WeaponStatGeneratorPipelineObject()
         );
 
         RegisterPipeline(

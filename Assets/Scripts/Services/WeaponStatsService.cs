@@ -31,10 +31,4 @@ public class WeaponStatsService
                 $"Failed to parse weapon stats: {weaponResult}", e);
         }
     }
-
-    public static WeaponStats BalanceWeaponStats(WeaponStats weaponStats)
-    {
-        // Implement weapon balancing logic here
-        return weaponStats;
-    }
 }

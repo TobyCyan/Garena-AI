@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using static UnityEngine.Object;
 
-public class SpriteGenerationService
+public class SpriteService
 {
     public static Sprite GenerateSprite(SpriteGenerationRequest request)
     {

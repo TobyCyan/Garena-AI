@@ -8,7 +8,7 @@ public class SpriteGeneratorPipelineObject : IPipelineObject
         }
 
         SpriteGenerationRequest request = new(data.Prompt);
-        var sprite = SpriteGenerationService.GenerateSprite(request);
+        var sprite = SpriteService.GenerateSprite(request);
         return new SpriteGeneratorPipelineResultData(sprite);
     }
 }
