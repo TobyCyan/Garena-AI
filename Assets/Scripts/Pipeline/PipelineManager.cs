@@ -13,8 +13,14 @@ public class PipelineManager : MonoBehaviour
     public void Init()
     {
         RegisterPipeline(
-            PipelineID.WeaponBuild,
-            new WeaponBuildPipelineObject()
+            PipelineID.WeaponStats,
+            new WeaponStatGeneratorPipelineObject(),
+            new WeaponStatBalancerPipelineObject()
+        );
+
+        RegisterPipeline(
+            PipelineID.SpriteGeneration,
+            new SpriteGeneratorPipelineObject()
         );
     }
 
@@ -60,4 +66,5 @@ public enum PipelineID
 {
     WeaponBuild,
     SpriteGeneration,
+    WeaponStats,
 }

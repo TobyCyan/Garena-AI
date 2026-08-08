@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 /// <summary>
 /// Api service to ChatGPT to return text only.
 /// </summary>
-public class ChatApiService : ITextApiService
+public class ChatApiService
 {
     private const string API_URL = "https://api.openai.com/v1/responses";
 
@@ -15,6 +15,8 @@ public class ChatApiService : ITextApiService
         Environment.GetEnvironmentVariable("OPENAI_API_KEY")
         ?? throw new InvalidOperationException(
             "OPENAI_API_KEY environment variable is not set.");
+
+    public static ChatApiService Instance { get; } = new();
 
     public async Task<string> GetResponse(string prompt)
     {
