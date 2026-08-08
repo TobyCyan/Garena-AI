@@ -8,7 +8,7 @@ using UnityEngine.Networking;
 /// Generates an image through the OpenAI Images API
 /// and returns the encoded image file as bytes.
 /// </summary>
-public class ImageApiService : IImageApiService
+public class ImageApiService
 {
     private const string API_URL =
         "https://api.openai.com/v1/images/generations";
