@@ -42,7 +42,7 @@ namespace Player.Weapons
                 return;
             }
 
-            int builtCount = 0;
+            List<int> builtWeaponIndices = new();
             for (int i = 0; i < testWeapons.Count; i++)
             {
                 WeaponDefinition definition = testWeapons[i];
@@ -54,17 +54,17 @@ namespace Player.Weapons
 
                 if (player.WeaponInventory.BuildAndEquip(definition, i) != null)
                 {
-                    builtCount++;
+                    builtWeaponIndices.Add(player.WeaponInventory.CurrentIndex);
                 }
             }
 
-            if (builtCount > 0)
+            if (builtWeaponIndices.Count > 0)
             {
-                player.WeaponInventory.Equip(
-                    Mathf.Clamp(startingSlot, 0, player.WeaponInventory.Weapons.Count - 1));
+                int builtSlot = Mathf.Clamp(startingSlot, 0, builtWeaponIndices.Count - 1);
+                player.WeaponInventory.Equip(builtWeaponIndices[builtSlot]);
             }
 
-            Debug.Log($"[WeaponSwapTester] Built {builtCount} test weapons. Press Enter to cycle weapons.", this);
+            Debug.Log($"[WeaponSwapTester] Built {builtWeaponIndices.Count} test weapons. Press Enter to cycle weapons.", this);
         }
     }
 }

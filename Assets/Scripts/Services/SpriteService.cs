@@ -7,6 +7,8 @@ using static UnityEngine.Object;
 
 public class SpriteService
 {
+    public const float GENERATED_SPRITE_PIXELS_PER_UNIT = 512f;
+
     public static async Task<Sprite> GenerateSpriteAsync(SpriteGenerationRequest request)
     {
         if (request == null)
@@ -49,7 +51,7 @@ public class SpriteService
             texture,
             new Rect(0, 0, texture.width, texture.height),
             new Vector2(0.5f, 0.5f),
-            32f
+            GENERATED_SPRITE_PIXELS_PER_UNIT
         );
 
         sprite.name = "GeneratedSprite";

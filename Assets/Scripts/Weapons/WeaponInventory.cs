@@ -154,7 +154,7 @@ namespace Player.Weapons
             ApplyEquippedSpriteBoundsOffset(weapon);
             WeaponSwingAnimator swingAnimator =
                 weapon.GetComponent<WeaponSwingAnimator>();
-            swingAnimator?.SetKeepVisible(true);
+            swingAnimator?.SetKeepVisible(false);
             if (slot >= 0 && slot < weapons.Count)
             {
                 Weapon oldWeapon = weapons[slot];
