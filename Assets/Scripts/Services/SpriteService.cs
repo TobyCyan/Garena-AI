@@ -7,6 +7,9 @@ using static UnityEngine.Object;
 
 public class SpriteService
 {
+    public const float GENERATED_SPRITE_PIXELS_PER_UNIT = 512f;
+    public static readonly Vector2 GENERATED_SPRITE_PIVOT = new(0.5f, 0.5f);
+
     public static async Task<Sprite> GenerateSpriteAsync(SpriteGenerationRequest request)
     {
         if (request == null)
@@ -38,23 +41,100 @@ public class SpriteService
                 "Failed to load generated image into texture.");
         }
 
-        texture = CopyToRgbaTexture(texture);
         texture.name = "GeneratedSpriteTexture";
-        texture.filterMode = FilterMode.Point;
-        texture.wrapMode = TextureWrapMode.Clamp;
-        ClearWhiteBackground(texture);
-        SaveGeneratedSpriteTexture(texture);
+        Texture2D texCopy = PrepareGeneratedWeaponTexture(texture);
+        SaveGeneratedSpriteTexture(texCopy);
 
         Sprite sprite = Sprite.Create(
             texture,
             new Rect(0, 0, texture.width, texture.height),
-            new Vector2(0.5f, 0.5f),
-            32f
+            GENERATED_SPRITE_PIVOT,
+            GENERATED_SPRITE_PIXELS_PER_UNIT
         );
 
         sprite.name = "GeneratedSprite";
 
         return sprite;
+    }
+
+    public static Texture2D PrepareGeneratedWeaponTexture(Texture2D texture)
+    {
+        if (texture == null)
+        {
+            return null;
+        }
+
+        string textureName = texture.name;
+        Texture2D preparedTexture = CopyToRgbaTexture(texture);
+        preparedTexture.name = textureName;
+        preparedTexture.filterMode = FilterMode.Point;
+        preparedTexture.wrapMode = TextureWrapMode.Clamp;
+        ClearWhiteBackground(preparedTexture);
+        return CropTransparentPadding(preparedTexture);
+    }
+
+    private static Texture2D CropTransparentPadding(Texture2D source)
+    {
+        const byte alphaThreshold = 8;
+
+        Color32[] pixels = source.GetPixels32();
+        int width = source.width;
+        int height = source.height;
+        int minX = width;
+        int minY = height;
+        int maxX = -1;
+        int maxY = -1;
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (pixels[y * width + x].a <= alphaThreshold)
+                {
+                    continue;
+                }
+
+                minX = Mathf.Min(minX, x);
+                minY = Mathf.Min(minY, y);
+                maxX = Mathf.Max(maxX, x);
+                maxY = Mathf.Max(maxY, y);
+            }
+        }
+
+        if (maxX < minX || maxY < minY)
+        {
+            return source;
+        }
+
+        int croppedWidth = maxX - minX + 1;
+        int croppedHeight = maxY - minY + 1;
+        if (croppedWidth == width && croppedHeight == height)
+        {
+            return source;
+        }
+
+        Texture2D croppedTexture = new(
+            croppedWidth,
+            croppedHeight,
+            TextureFormat.RGBA32,
+            false);
+        Color32[] croppedPixels = new Color32[croppedWidth * croppedHeight];
+        for (int y = 0; y < croppedHeight; y++)
+        {
+            for (int x = 0; x < croppedWidth; x++)
+            {
+                croppedPixels[y * croppedWidth + x] =
+                    pixels[(minY + y) * width + minX + x];
+            }
+        }
+
+        croppedTexture.SetPixels32(croppedPixels);
+        croppedTexture.Apply();
+        croppedTexture.name = source.name;
+        croppedTexture.filterMode = source.filterMode;
+        croppedTexture.wrapMode = source.wrapMode;
+        Destroy(source);
+        return croppedTexture;
     }
 
     private static void ClearWhiteBackground(Texture2D texture)

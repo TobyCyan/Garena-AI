@@ -4,10 +4,10 @@ namespace Player.Weapons
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Weapon))]
-    public sealed class WeaponSwingAnimator : MonoBehaviour
+    public sealed class MeleeWeaponSwingAnimator : MonoBehaviour
     {
-        private static readonly float[] RaisedToEndProgress = { 0f, 0f, 0.4f, 0.8f, 1f };
-        private static readonly float[] WeaponAngles = { 130f, 130f, -25f, -45f, -45f };
+        private const float RaisedAngle = 130f;
+        private const float SwungAngle = -25f;
 
         [SerializeField] private Transform pivot;
 
@@ -18,13 +18,13 @@ namespace Player.Weapons
         private Transform gripStart;
         private Transform gripRaised;
         private Transform gripEnd;
-        private int currentPose = -1;
+        private WeaponPose currentPose = WeaponPose.None;
         private bool keepVisible;
 
         private void Awake()
         {
             weapon = GetComponent<Weapon>();
-            pivot ??= transform.Find("Base");
+            pivot = pivot != null ? pivot : transform.Find("Base");
             playerRenderer = transform.parent != null
                 ? transform.parent.GetComponentInParent<SpriteRenderer>()
                 : null;
@@ -35,7 +35,7 @@ namespace Player.Weapons
 
         private void OnEnable()
         {
-            weapon ??= GetComponent<Weapon>();
+            weapon = weapon != null ? weapon : GetComponent<Weapon>();
             weaponRenderers ??= GetComponentsInChildren<SpriteRenderer>(true);
             weapon.OnAttackStarted += HandleAttackStarted;
             weapon.OnAttackFinished += HandleAttackFinished;
@@ -48,7 +48,7 @@ namespace Player.Weapons
             {
                 SetWeaponVisible(false);
             }
-            currentPose = -1;
+            currentPose = WeaponPose.None;
 
             if (weapon != null)
             {
@@ -65,29 +65,16 @@ namespace Player.Weapons
                 return;
             }
 
-            int pose = GetAttackPose(playerRenderer.sprite);
-            if (pose < 0)
+            WeaponPose pose = GetAttackPose(playerRenderer.sprite);
+            if (pose == WeaponPose.None)
             {
                 SetWeaponVisible(false);
                 return;
             }
 
-            if (currentPose == -1 && pose >= 3)
+            if (currentPose != WeaponPose.None && pose < currentPose)
             {
                 SetWeaponVisible(false);
-                return;
-            }
-
-            if (currentPose >= 0 && pose < currentPose)
-            {
-                SetWeaponVisible(false);
-                return;
-            }
-
-            if (pose >= 3)
-            {
-                SetWeaponVisible(false);
-                currentPose = pose;
                 return;
             }
 
@@ -117,7 +104,7 @@ namespace Player.Weapons
         private void HandleAttackStarted(Weapon attackingWeapon)
         {
             SetWeaponVisible(keepVisible);
-            currentPose = -1;
+            currentPose = WeaponPose.None;
         }
 
         private void HandleAttackFinished(Weapon attackingWeapon)
@@ -125,20 +112,29 @@ namespace Player.Weapons
             SetWeaponVisible(keepVisible);
         }
 
-        private static int GetAttackPose(Sprite sprite)
+        private static WeaponPose GetAttackPose(Sprite sprite)
         {
             if (sprite == null || !sprite.name.StartsWith("Sword_Base_"))
             {
-                return -1;
+                return WeaponPose.None;
             }
 
             string suffix = sprite.name.Substring("Sword_Base_".Length);
-            return int.TryParse(suffix, out int pose) && pose >= 0 && pose < RaisedToEndProgress.Length
-                ? pose
-                : -1;
+            if (!int.TryParse(suffix, out int pose))
+            {
+                return WeaponPose.None;
+            }
+
+            return pose switch
+            {
+                0 => WeaponPose.Raised,
+                1 => WeaponPose.Raised,
+                2 => WeaponPose.Swung,
+                _ => WeaponPose.None,
+            };
         }
 
-        private void ApplyPose(int pose)
+        private void ApplyPose(WeaponPose pose)
         {
             currentPose = pose;
             if (pivot != null)
@@ -151,19 +147,16 @@ namespace Player.Weapons
                     ? gripStart.InverseTransformVector(gripEnd.position - gripStart.position)
                     : Vector2.zero;
 
-                Vector2 raisedCompensation = new Vector2(0.254f, -0.314f);
-                Vector2 endCompensation = new Vector2(-0.631f, 0.661f);
-
-                raisedGripOffset += raisedCompensation;
-                endGripOffset += endCompensation;
-
-                Vector2 poseOffset = Vector2.Lerp(
-                    raisedGripOffset,
-                    endGripOffset,
-                    RaisedToEndProgress[pose]);
+                Vector2 poseOffset = pose == WeaponPose.Swung
+                    ? endGripOffset
+                    : raisedGripOffset;
+                float weaponAngle = pose == WeaponPose.Swung
+                    ? SwungAngle
+                    : RaisedAngle;
             
-                pivot.localPosition = pivotRestLocalPosition + (Vector3)poseOffset;
-                pivot.localRotation = Quaternion.Euler(0f, 0f, WeaponAngles[pose]);
+                pivot.SetLocalPositionAndRotation(
+                    pivotRestLocalPosition + (Vector3)poseOffset,
+                    Quaternion.Euler(0f, 0f, weaponAngle));
             }
         }
 
@@ -182,5 +175,12 @@ namespace Player.Weapons
                 }
             }
         }
+    }
+
+    public enum WeaponPose
+    {
+        None = -1,
+        Raised = 0,
+        Swung = 1,
     }
 }

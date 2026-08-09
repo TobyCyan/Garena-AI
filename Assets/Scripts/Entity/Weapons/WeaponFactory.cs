@@ -29,7 +29,7 @@ namespace Player.Weapons
             Weapon weapon = root.AddComponent<Weapon>();
             weapon.Configure(definition);
 
-            WeaponSwingAnimator swingAnimator = root.AddComponent<WeaponSwingAnimator>();
+            MeleeWeaponSwingAnimator swingAnimator = root.AddComponent<MeleeWeaponSwingAnimator>();
             swingAnimator.SetPivot(baseObject.transform);
             return weapon;
         }

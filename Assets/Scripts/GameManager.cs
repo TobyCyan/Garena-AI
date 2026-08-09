@@ -116,22 +116,7 @@ public class GameManager : MonoBehaviour
         switch (output)
         {
             case WeaponBuildPipelineResultData weaponResult:
-                Weapon builtWeapon = weaponResult.Weapon;
-                if (builtWeapon == null)
-                {
-                    Debug.LogWarning("Built weapon is null.");
-                    onFailed?.Invoke("Built weapon is null.");
-                    return;
-                }
-
-                onBeforeShowcase?.Invoke();
-                weaponShowcaseManager.ShowcaseWeapon(
-                    builtWeapon.gameObject,
-                    () =>
-                    {
-                        EquipShowcasedWeapon(weaponResult);
-                        onCompleted?.Invoke(output);
-                    });
+                HandleBuiltWeapon(weaponResult, onCompleted, onFailed, onBeforeShowcase);
                 break;
 
             default:
@@ -139,6 +124,28 @@ public class GameManager : MonoBehaviour
                 onFailed?.Invoke("Unhandled pipeline result type.");
                 break;
         }
+    }
+
+    private void HandleBuiltWeapon(WeaponBuildPipelineResultData weaponResult, Action<BasePipelineData> onCompleted, Action<string> onFailed, Action onBeforeShowcase)
+    {
+        Weapon builtWeapon = weaponResult.Weapon;
+        if (builtWeapon == null)
+        {
+            Debug.LogWarning("Built weapon is null.");
+            onFailed?.Invoke("Built weapon is null.");
+            return;
+        }
+
+        void OnWeaponConfirmed()
+        {
+            EquipShowcasedWeapon(weaponResult);
+            onCompleted?.Invoke(weaponResult);
+            weaponShowcaseManager.OnWeaponConfirmed -= OnWeaponConfirmed;
+        }
+
+        onBeforeShowcase?.Invoke();
+        weaponShowcaseManager.OnWeaponConfirmed += OnWeaponConfirmed;
+        weaponShowcaseManager.ShowcaseWeapon(builtWeapon.gameObject);
     }
 
     private void EquipShowcasedWeapon(WeaponBuildPipelineResultData weaponResult)

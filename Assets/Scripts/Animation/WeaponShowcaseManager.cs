@@ -1,10 +1,13 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using UnityEngine.UI;
+using Player.Weapons;
 
 public class WeaponShowcaseManager : MonoBehaviour
 {
     [SerializeField] private ParticleSystem burstEffect;
+    [SerializeField] private Button confirmButton;
 
     // Particle System Settings
     private const int SEED = 12345;
@@ -14,6 +17,7 @@ public class WeaponShowcaseManager : MonoBehaviour
     [SerializeField] private Vector3 initialSpriteScale = new(1.5f, 1.5f, 1f);
     [SerializeField] private int showcaseSortingOrder = 100;
     private static readonly Vector3 ORIGINAL_SPRITE_SCALE = Vector3.one;
+    public Action OnWeaponConfirmed;
 
     public void Init()
     {
@@ -23,14 +27,22 @@ public class WeaponShowcaseManager : MonoBehaviour
             burstEffect.useAutoRandomSeed = false;
             burstEffect.randomSeed = SEED;
         }
+
+        if (confirmButton != null)
+        {
+            confirmButton.onClick.AddListener(OnConfirmButtonClicked);
+            confirmButton.interactable = false;
+            confirmButton.gameObject.SetActive(false);
+        }
     }
 
-    public void ShowcaseWeapon(GameObject weaponGo, Action onComplete = null)
+    public void ShowcaseWeapon(GameObject weaponGo)
     {
+        SetConfirmButtonActive(false);
+
         if (weaponGo == null)
         {
             Debug.LogWarning("Weapon GameObject is null. Cannot showcase.");
-            onComplete?.Invoke();
             return;
         }
 
@@ -40,9 +52,9 @@ public class WeaponShowcaseManager : MonoBehaviour
 
         SpriteRenderer spriteRenderer =
             weaponGo.GetComponentInChildren<SpriteRenderer>(true);
-        Player.Weapons.WeaponSwingAnimator swingAnimator =
-            weaponGo.GetComponent<Player.Weapons.WeaponSwingAnimator>();
-        swingAnimator?.SetKeepVisible(true);
+        MeleeWeaponSwingAnimator swingAnimator =
+            weaponGo.GetComponent<MeleeWeaponSwingAnimator>();
+        swingAnimator.SetKeepVisible(true);
 
         if (spriteRenderer != null)
         {
@@ -50,13 +62,14 @@ public class WeaponShowcaseManager : MonoBehaviour
             spriteRenderer.gameObject.SetActive(true);
             spriteRenderer.transform.localPosition = Vector3.zero;
             ApplyShowcaseSorting(spriteRenderer);
-            LerpWeaponSpriteScale(spriteRenderer, lerpDuration, onComplete);
+            LerpWeaponSpriteScale(spriteRenderer, lerpDuration);
         }
         else
         {
             Debug.LogWarning("Weapon GameObject does not have a SpriteRenderer component.");
-            onComplete?.Invoke();
         }
+
+        SetConfirmButtonActive(true);
 
         if (burstEffect != null)
         {
@@ -76,22 +89,19 @@ public class WeaponShowcaseManager : MonoBehaviour
 
     private void LerpWeaponSpriteScale(
         SpriteRenderer spriteRenderer,
-        float duration,
-        Action onComplete)
+        float duration)
     {
         if (spriteRenderer == null)
         {
             Debug.LogWarning("SpriteRenderer is null. Cannot lerp scale.");
-            onComplete?.Invoke();
             return;
         }
-        StartCoroutine(LerpCoroutine(spriteRenderer, duration, onComplete));
+        StartCoroutine(LerpCoroutine(spriteRenderer, duration));
     }
 
     private IEnumerator LerpCoroutine(
         SpriteRenderer spriteRenderer,
-        float duration,
-        Action onComplete)
+        float duration)
     {
         spriteRenderer.transform.localScale = initialSpriteScale;
 
@@ -104,6 +114,28 @@ public class WeaponShowcaseManager : MonoBehaviour
             yield return null;
         }
         spriteRenderer.transform.localScale = ORIGINAL_SPRITE_SCALE;
-        onComplete?.Invoke();
+    }
+
+    private void OnConfirmButtonClicked()
+    {
+        SetConfirmButtonActive(false);
+        OnWeaponConfirmed?.Invoke();
+    }
+
+    private void SetConfirmButtonActive(bool active)
+    {
+        if (confirmButton != null)
+        {
+            confirmButton.interactable = active;
+            confirmButton.gameObject.SetActive(active);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (confirmButton != null)
+        {
+            confirmButton.onClick.RemoveListener(OnConfirmButtonClicked);
+        }
     }
 }
