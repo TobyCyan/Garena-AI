@@ -25,20 +25,6 @@ public class ProgressBar : MonoBehaviour
             ? Mathf.Clamp01(progress / target)
             : 0f;
         slider.SetValueWithoutNotify(newFillAmount);
-
-        if (slider.fillRect != null &&
-            slider.fillRect.TryGetComponent(out Image fillImage))
-        {
-            slider.fillRect.anchorMin = Vector2.zero;
-            slider.fillRect.anchorMax = Vector2.one;
-            slider.fillRect.offsetMin = Vector2.zero;
-            slider.fillRect.offsetMax = Vector2.zero;
-            fillImage.type = Image.Type.Filled;
-            fillImage.fillMethod = Image.FillMethod.Horizontal;
-            fillImage.fillOrigin = (int)Image.OriginHorizontal.Left;
-            fillImage.fillAmount = newFillAmount;
-            fillImage.SetVerticesDirty();
-        }
     }
 
     public void ResetFill()
