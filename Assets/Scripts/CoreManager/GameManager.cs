@@ -192,7 +192,13 @@ public class GameManager : MonoBehaviour
 
     private void CloseChatSession()
     {
-        chatInputManager?.CloseSession();
+        if (chatInputManager == null)
+        {
+            Debug.LogWarning("ChatInputManager was not found. Cannot close chat session.", this);
+            return;
+        }
+
+        chatInputManager.CloseSession();
     }
 
     private void SaveGeneratedWeaponContext(WeaponBuildPipelineResultData weaponResult)

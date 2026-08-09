@@ -3622,7 +3622,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game::GameManager
   pipelineManager: {fileID: 1492834631}
   weaponShowcaseManager: {fileID: 76517009}
-  chatInputManager: {fileID: 0}
+  chatInputManager: {fileID: 1903112883}
   generatedWeaponContextManager: {fileID: 1076008812}
   sceneTransitionManager: {fileID: 1871539954}
   placeholderChatReply: Got it. Add more details, or confirm when the weapon description
@@ -4196,6 +4196,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8305c18b964d49eaa1c9315de5440160, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game::SceneTransitionManager
+--- !u!114 &1903112883 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5375375230210698195, guid: 6487811e1823d404699dbaf44e9d8e53, type: 3}
+  m_PrefabInstance: {fileID: 1441117973}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fe3093434039c84e8a36761f51eaaba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::ChatInputManager
 --- !u!1 &1952211092
 GameObject:
   m_ObjectHideFlags: 0

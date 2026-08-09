@@ -1,7 +1,8 @@
 using System;
 using UnityEngine;
-
 [DisallowMultipleComponent]
+
+[RequireComponent(typeof(ChatBoxCanvas))]
 public sealed class ChatInputManager : MonoBehaviour
 {
     [SerializeField] private ChatBoxCanvas chatBox;
@@ -33,7 +34,8 @@ public sealed class ChatInputManager : MonoBehaviour
 
     public void CloseSession()
     {
-        chatBox?.CloseWindow();
+        if (chatBox != null)
+            chatBox.CloseWindow();
     }
 
     private void Awake()
