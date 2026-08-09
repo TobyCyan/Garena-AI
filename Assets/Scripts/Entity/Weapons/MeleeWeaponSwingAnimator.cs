@@ -24,9 +24,7 @@ namespace Player.Weapons
         {
             weapon = GetComponent<Weapon>();
             pivot = pivot != null ? pivot : transform.Find("Base");
-            playerRenderer = transform.parent != null
-                ? transform.parent.GetComponentInParent<SpriteRenderer>()
-                : null;
+            ResolvePlayerRenderer();
             weaponRenderers = GetComponentsInChildren<SpriteRenderer>(true);
             pivotRestLocalPosition = pivot != null ? pivot.localPosition : Vector3.zero;
             SetWeaponVisible(false);
@@ -35,6 +33,7 @@ namespace Player.Weapons
         private void OnEnable()
         {
             weapon = weapon != null ? weapon : GetComponent<Weapon>();
+            ResolvePlayerRenderer();
             weaponRenderers ??= GetComponentsInChildren<SpriteRenderer>(true);
             weapon.OnAttackStarted += HandleAttackStarted;
             weapon.OnAttackFinished += HandleAttackFinished;
@@ -62,6 +61,7 @@ namespace Player.Weapons
             }
 
             WeaponPose pose = GetAttackPose(playerRenderer.sprite);
+            Debug.Log($"Current Pose: {currentPose}, New Pose: {pose}");
             if (pose == WeaponPose.None)
             {
                 SetWeaponVisible(false);
@@ -89,6 +89,7 @@ namespace Player.Weapons
             gripStart = start;
             gripRaised = raised;
             gripEnd = end;
+            ResolvePlayerRenderer();
         }
 
         private void HandleAttackStarted(Weapon attackingWeapon)
@@ -164,6 +165,17 @@ namespace Player.Weapons
                     weaponRenderer.enabled = visible;
                 }
             }
+        }
+
+        private void ResolvePlayerRenderer()
+        {
+            if (playerRenderer != null)
+            {
+                return;
+            }
+            playerRenderer = transform.parent != null
+                ? transform.parent.GetComponentInParent<SpriteRenderer>()
+                : null;
         }
     }
 
