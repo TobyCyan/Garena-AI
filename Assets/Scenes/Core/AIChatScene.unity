@@ -127,14 +127,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1232076694926918848, guid: 9d031558f32eeff43a70fd031e9052cd, type: 3}
-      propertyPath: m_MatchWidthOrHeight
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1232076694926918848, guid: 9d031558f32eeff43a70fd031e9052cd, type: 3}
-      propertyPath: m_ReferencePixelsPerUnit
-      value: 100
-      objectReference: {fileID: 0}
     - target: {fileID: 1286152481491979835, guid: 9d031558f32eeff43a70fd031e9052cd, type: 3}
       propertyPath: m_Name
       value: Weapon Showcase Manager
@@ -152,9 +144,13 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1911126585612126780, guid: 9d031558f32eeff43a70fd031e9052cd, type: 3}
-      propertyPath: confirmButton
-      value: 
-      objectReference: {fileID: 1175460040}
+      propertyPath: initialSpriteScale.x
+      value: 550
+      objectReference: {fileID: 0}
+    - target: {fileID: 1911126585612126780, guid: 9d031558f32eeff43a70fd031e9052cd, type: 3}
+      propertyPath: initialSpriteScale.y
+      value: 550
+      objectReference: {fileID: 0}
     - target: {fileID: 2072208147453406415, guid: 9d031558f32eeff43a70fd031e9052cd, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.12686
@@ -195,13 +191,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2716023451140411414, guid: 9d031558f32eeff43a70fd031e9052cd, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 320
+      objectReference: {fileID: 0}
+    - target: {fileID: 2716023451140411414, guid: 9d031558f32eeff43a70fd031e9052cd, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 320
+      objectReference: {fileID: 0}
     - target: {fileID: 4241812101382918661, guid: 9d031558f32eeff43a70fd031e9052cd, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 400
+      value: 320
       objectReference: {fileID: 0}
     - target: {fileID: 4241812101382918661, guid: 9d031558f32eeff43a70fd031e9052cd, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 400
+      value: 320
       objectReference: {fileID: 0}
     - target: {fileID: 4241812101382918661, guid: 9d031558f32eeff43a70fd031e9052cd, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -210,6 +214,18 @@ PrefabInstance:
     - target: {fileID: 4241812101382918661, guid: 9d031558f32eeff43a70fd031e9052cd, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 160
+      objectReference: {fileID: 0}
+    - target: {fileID: 6347105019243092976, guid: 9d031558f32eeff43a70fd031e9052cd, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 650
+      objectReference: {fileID: 0}
+    - target: {fileID: 6347105019243092976, guid: 9d031558f32eeff43a70fd031e9052cd, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 650
+      objectReference: {fileID: 0}
+    - target: {fileID: 6347105019243092976, guid: 9d031558f32eeff43a70fd031e9052cd, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 8100712605754994498, guid: 9d031558f32eeff43a70fd031e9052cd, type: 3}
       propertyPath: m_text
@@ -3808,17 +3824,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!114 &1175460040 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 70568191323868122, guid: 9d031558f32eeff43a70fd031e9052cd, type: 3}
-  m_PrefabInstance: {fileID: 76517008}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1001 &1441117973
 PrefabInstance:
   m_ObjectHideFlags: 0

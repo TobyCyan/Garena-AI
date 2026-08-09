@@ -15,8 +15,8 @@ public class WeaponShowcaseManager : MonoBehaviour
 
     // Weapon Sprite Animation Settings
     [SerializeField] private float lerpDuration = 0.25f;
-    [SerializeField] private Vector2 initialSpriteScale = new(600f, 600f);
-    private static readonly Vector2 ORIGINAL_SPRITE_SCALE = new(500f, 500f);
+    [SerializeField] private Vector2 initialSpriteScale = new(750f, 750f);
+    private static readonly Vector2 ORIGINAL_SPRITE_SCALE = new(650f, 650f);
     public Action OnWeaponConfirmed;
     public Action OnWeaponRetry;
 
