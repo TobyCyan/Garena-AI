@@ -51,7 +51,7 @@ MonoBehaviour:
   retryButton: {fileID: 3576717912262556123}
   weaponImage: {fileID: 1487480435733464108}
   lerpDuration: 0.25
-  initialSpriteScale: {x: 2, y: 2}
+  initialSpriteScale: {x: 550, y: 550}
 --- !u!1 &1471795663850952210
 GameObject:
   m_ObjectHideFlags: 0
