@@ -1,25 +1,16 @@
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(SoundEffectLibrary))]
 public class SoundEffectManager : MonoBehaviour
 {
-    private static SoundEffectManager instance;
-
     private static AudioSource audioSource;
     private static SoundEffectLibrary soundEffectLibrary;
 
     private void Awake()
     {
-        if (instance == null)
-        {
-            instance = this;
-            audioSource = GetComponent<AudioSource>();
-            soundEffectLibrary = GetComponent<SoundEffectLibrary>();
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        audioSource = GetComponent<AudioSource>();
+        soundEffectLibrary = GetComponent<SoundEffectLibrary>();
     }
 
     public static void Play(string name)

@@ -63,6 +63,7 @@ public class WeaponShowcaseManager : MonoBehaviour
 
         SetConfirmButtonActive(true);
 
+        SoundEffectManager.Play("generationcomplete");
         if (burstEffect != null)
         {
             burstEffect.Play();
@@ -100,6 +101,7 @@ public class WeaponShowcaseManager : MonoBehaviour
 
     private void OnConfirmButtonClicked()
     {
+        SoundEffectManager.Play("buttonclick");
         SetConfirmButtonActive(false);
         SetWeaponImageActive(false);
         OnWeaponConfirmed?.Invoke();

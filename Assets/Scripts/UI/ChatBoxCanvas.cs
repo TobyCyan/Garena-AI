@@ -94,6 +94,7 @@ public sealed class ChatBoxCanvas : MonoBehaviour
             return;
         }
 
+        SoundEffectManager.Play("buttonclick");
         inputField.text = string.Empty;
         MessageSubmitted?.Invoke(input);
         inputField.ActivateInputField();
@@ -111,6 +112,7 @@ public sealed class ChatBoxCanvas : MonoBehaviour
             SubmitCurrentInput();
         }
 
+        SoundEffectManager.Play("buttonclick");
         ConfirmRequested?.Invoke();
     }
 
