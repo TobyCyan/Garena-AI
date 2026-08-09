@@ -39,7 +39,7 @@ namespace Player.Weapons
 
         private void Awake()
         {
-            weaponRenderer ??= GetComponentInChildren<SpriteRenderer>(true);
+            weaponRenderer = weaponRenderer != null ? weaponRenderer : GetComponentInChildren<SpriteRenderer>(true);
             ApplyPresentation();
         }
 
@@ -67,7 +67,7 @@ namespace Player.Weapons
             category = definition.Category;
             image = definition.Image;
             stats = definition.Stats?.CopySanitized() ?? new WeaponStats();
-            weaponRenderer ??= GetComponentInChildren<SpriteRenderer>(true);
+            weaponRenderer = weaponRenderer != null ? weaponRenderer : GetComponentInChildren<SpriteRenderer>(true);
             ApplyPresentation();
         }
 
