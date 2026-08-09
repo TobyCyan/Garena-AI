@@ -53,7 +53,7 @@ namespace Player.Weapons
             Transform parent)
         {
             return CreateWeapon(
-                new WeaponDefinition(name, WeaponCategory.Melee, image, stats),
+                new WeaponDefinition(name, WeaponCategory.Sword, image, stats),
                 parent);
         }
     }

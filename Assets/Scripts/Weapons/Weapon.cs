@@ -14,7 +14,7 @@ namespace Player.Weapons
         private const float HitBoxForwardGap = 0.03f;
 
         [SerializeField] private string weaponName = "AI Weapon";
-        [SerializeField] private WeaponCategory category = WeaponCategory.Melee;
+        [SerializeField] private WeaponCategory category = WeaponCategory.Sword;
         [SerializeField] private Sprite image;
         [SerializeField] private WeaponStats stats = new();
         [SerializeField] private SpriteRenderer weaponRenderer;

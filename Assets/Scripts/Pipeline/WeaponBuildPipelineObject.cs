@@ -1,9 +1,10 @@
 using Player.Weapons;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class WeaponBuildPipelineObject : IPipelineObject
 {
-    public BasePipelineData DoPipe(BasePipelineData input)
+    public Task<BasePipelineData> DoPipeAsync(BasePipelineData input)
     {
         if (input is not WeaponBuildRequestPipelineData data)
         {
@@ -23,6 +24,7 @@ public class WeaponBuildPipelineObject : IPipelineObject
         }
 
         Weapon weapon = player.WeaponInventory.Build(definition);
-        return new WeaponBuildPipelineResultData(weapon);
+        return Task.FromResult<BasePipelineData>(
+            new WeaponBuildPipelineResultData(weapon));
     }
 }

@@ -1,8 +1,9 @@
 using Player.Weapons;
+using System.Threading.Tasks;
 
 public class SpriteGeneratorPipelineObject : IPipelineObject
 {
-    public BasePipelineData DoPipe(BasePipelineData input)
+    public async Task<BasePipelineData> DoPipeAsync(BasePipelineData input)
     {
         if (input is not WeaponStatsPipelineData data)
         {
@@ -10,7 +11,7 @@ public class SpriteGeneratorPipelineObject : IPipelineObject
         }
 
         SpriteGenerationRequest request = new(data.Prompt, data.WeaponStatsData.Category);
-        var sprite = SpriteService.GenerateSprite(request);
+        var sprite = await SpriteService.GenerateSpriteAsync(request);
         WeaponDefinition definition = new(
             "AI Weapon",
             data.WeaponStatsData.Category,

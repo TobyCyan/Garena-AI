@@ -1,10 +1,11 @@
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using static UnityEngine.Object;
 
 public class SpriteService
 {
-    public static Sprite GenerateSprite(SpriteGenerationRequest request)
+    public static async Task<Sprite> GenerateSpriteAsync(SpriteGenerationRequest request)
     {
         if (request == null)
         {
@@ -18,10 +19,7 @@ public class SpriteService
 
         string prompt = request.Prompt + ", Weapon Category: " + request.WeaponCategory;
 
-        byte[] spriteBytes = ImageApiService
-                .GetImage(prompt)
-                .GetAwaiter()
-                .GetResult();
+        byte[] spriteBytes = await ImageApiService.GetImage(prompt);
 
         if (spriteBytes == null || spriteBytes.Length == 0)
         {

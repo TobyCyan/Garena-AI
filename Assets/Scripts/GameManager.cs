@@ -1,6 +1,6 @@
 using Player.Weapons;
 using System;
-using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -39,26 +39,63 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Executes the pipelines in parallel.
+    /// Starts the pipeline asynchronously and reports the result through callbacks.
     /// </summary>
     public void ExecutePipelines(string input)
+    {
+        ExecutePipelines(input, null, null);
+    }
+
+    public void ExecutePipelines(
+        string input,
+        Action<BasePipelineData> onCompleted,
+        Action<string> onFailed)
     {
         if (string.IsNullOrWhiteSpace(input))
         {
             Debug.LogWarning("Cannot execute pipelines without input.");
+            onFailed?.Invoke("Cannot execute pipelines without input.");
             return;
         }
 
         WeaponStatsPipelineInputData inputData = new(input);
-        StartCoroutine(ExecutePipelineCoroutine(PipelineID.WeaponBuild, inputData));
+        _ = ExecutePipelineAsync(
+            PipelineID.WeaponBuild,
+            inputData,
+            onCompleted,
+            onFailed);
     }
 
-    private IEnumerator ExecutePipelineCoroutine(PipelineID id, BasePipelineData input)
+    private async Task ExecutePipelineAsync(
+        PipelineID id,
+        BasePipelineData input,
+        Action<BasePipelineData> onCompleted,
+        Action<string> onFailed)
     {
-        yield return null;
-        BasePipelineData output = pipelineManager.ExecutePipeline
-            (id, input);
+        BasePipelineData output;
+
+        try
+        {
+            output = await pipelineManager.ExecutePipelineAsync(id, input);
+        }
+        catch (Exception ex)
+        {
+            string message = $"Weapon generation failed: {ex.Message}";
+            Debug.LogError(message, this);
+            onFailed?.Invoke(message);
+            return;
+        }
+
+        if (output == null)
+        {
+            const string message = "Weapon generation failed.";
+            Debug.LogWarning(message, this);
+            onFailed?.Invoke(message);
+            return;
+        }
+
         HandlePipelineResults(output);
+        onCompleted?.Invoke(output);
     }
 
     private void HandlePipelineResults(BasePipelineData output)

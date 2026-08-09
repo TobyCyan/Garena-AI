@@ -10,6 +10,7 @@ using static UnityEngine.Networking.UnityWebRequest;
 public class ImageApiService
 {
     private const string API_URL = Config.BACKEND_API_URL + "/weapon/sprite/";
+    private const int REQUEST_TIMEOUT_SECONDS = 120;
 
     public static async Task<byte[]> GetImage(string prompt)
     {
@@ -21,6 +22,7 @@ public class ImageApiService
         string url = $"{API_URL}?description={EscapeURL(prompt)}";
 
         UnityWebRequest request = Get(url);
+        request.timeout = REQUEST_TIMEOUT_SECONDS;
 
         UnityWebRequestAsyncOperation operation = request.SendWebRequest();
 

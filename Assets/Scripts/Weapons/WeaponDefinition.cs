@@ -5,9 +5,10 @@ namespace Player.Weapons
 {
     public enum WeaponCategory
     {
-        Melee,
-        Ranged,
-        Magic
+        Sword,
+        Mace,
+        Spear,
+        Dagger,
     }
 
     [Serializable]
@@ -39,7 +40,7 @@ namespace Player.Weapons
     public sealed class WeaponDefinition
     {
         public string Name = "AI Weapon";
-        public WeaponCategory Category = WeaponCategory.Melee;
+        public WeaponCategory Category = WeaponCategory.Sword;
         public Sprite Image;
         public WeaponStats Stats = new();
 

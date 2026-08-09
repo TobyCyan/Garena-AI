@@ -1,4 +1,6 @@
+using System.Threading.Tasks;
+
 public interface IPipelineObject
 {
-    BasePipelineData DoPipe(BasePipelineData input);
+    Task<BasePipelineData> DoPipeAsync(BasePipelineData input);
 }

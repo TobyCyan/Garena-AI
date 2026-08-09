@@ -8,6 +8,7 @@ using static UnityEngine.Networking.UnityWebRequest;
 public class StatsApiService
 {
     private const string API_URL = Config.BACKEND_API_URL + "/weapon/stats/";
+    private const int REQUEST_TIMEOUT_SECONDS = 30;
 
     public static async Task<string> GetStats(string description)
     {
@@ -19,6 +20,7 @@ public class StatsApiService
         string url = $"{API_URL}?description={EscapeURL(description)}";
 
         UnityWebRequest request = Get(url);
+        request.timeout = REQUEST_TIMEOUT_SECONDS;
 
         UnityWebRequestAsyncOperation operation = request.SendWebRequest();
 

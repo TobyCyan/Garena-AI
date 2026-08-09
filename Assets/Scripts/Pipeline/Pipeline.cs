@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public class Pipeline
 {
@@ -10,7 +11,7 @@ public class Pipeline
                 ?? throw new PipelineException("Pipeline cannot have no objects.");
     }
 
-    public BasePipelineData Pipe(BasePipelineData input)
+    public async Task<BasePipelineData> PipeAsync(BasePipelineData input)
     {
         if (pipelineObjects.Count == 0)
         {
@@ -21,7 +22,7 @@ public class Pipeline
 
         foreach (IPipelineObject pipelineObject in pipelineObjects)
         {
-            output = pipelineObject.DoPipe(output);
+            output = await pipelineObject.DoPipeAsync(output);
             if (output == null)
             {
                 throw new PipelineException($"Pipeline object {pipelineObject.GetType().Name} returned null output.");
