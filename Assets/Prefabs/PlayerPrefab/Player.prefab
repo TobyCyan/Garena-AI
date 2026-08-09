@@ -184,7 +184,8 @@ MonoBehaviour:
   animator: {fileID: 3884698835911320020}
   weaponInventory: {fileID: 591409843328594794}
   baseAttackAnimationDuration: 0.6
-  logMovementDebug: 1
+  logMovementDebug: 0
+  footstepInterval: 0.5
 --- !u!114 &591409843328594794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,7 +202,7 @@ MonoBehaviour:
   weaponSocket: {fileID: 8670227268661331664}
   weaponRaised: {fileID: 7012345678901234578}
   weaponEnd: {fileID: 7012345678901234568}
-  createFallbackWeapons: 1
+  createFallbackWeapons: 0
   startingWeaponIndex: 0
 --- !u!70 &1376213373080300727
 CapsuleCollider2D:
