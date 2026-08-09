@@ -1,3 +1,5 @@
+using Player.Weapons;
+
 public class SpriteGeneratorPipelineObject : IPipelineObject
 {
     public BasePipelineData DoPipe(BasePipelineData input)
@@ -9,6 +11,11 @@ public class SpriteGeneratorPipelineObject : IPipelineObject
 
         SpriteGenerationRequest request = new(data.Prompt, data.WeaponStatsData.Category);
         var sprite = SpriteService.GenerateSprite(request);
-        return new SpriteGeneratorPipelineResultData(sprite);
+        WeaponDefinition definition = new(
+            "AI Weapon",
+            data.WeaponStatsData.Category,
+            sprite,
+            data.WeaponStatsData.Stats);
+        return new WeaponBuildRequestPipelineData(definition);
     }
 }

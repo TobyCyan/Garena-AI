@@ -30,7 +30,8 @@ namespace Player.Weapons
 
         public WeaponStats CopySanitized()
         {
-            return new WeaponStats(Damage, Size, Speed);
+            // TODO: Apply generated size to the sprite and hitbox separately once animation-safe sizing is implemented.
+            return new WeaponStats(Damage, Vector2.one, Speed);
         }
     }
 
