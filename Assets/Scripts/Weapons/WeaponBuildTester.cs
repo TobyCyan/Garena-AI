@@ -142,13 +142,16 @@ namespace Player.Weapons
             }
 
             texture.name = Path.GetFileNameWithoutExtension(path);
-            texture.filterMode = FilterMode.Point;
-            texture.wrapMode = TextureWrapMode.Clamp;
+            texture = SpriteService.PrepareGeneratedWeaponTexture(texture);
+            if (texture == null)
+            {
+                return null;
+            }
 
             Sprite sprite = Sprite.Create(
                 texture,
                 new Rect(0f, 0f, texture.width, texture.height),
-                new Vector2(0.5f, 0.5f),
+                SpriteService.GENERATED_SPRITE_PIVOT,
                 SpriteService.GENERATED_SPRITE_PIXELS_PER_UNIT);
             sprite.name = texture.name;
             return sprite;

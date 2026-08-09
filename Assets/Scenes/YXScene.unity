@@ -495,22 +495,6 @@ MonoBehaviour:
       Size: {x: 1, y: 1}
       Speed: 1
   startingSlot: 0
---- !u!1 &1448121073 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5199591993995806429, guid: 7b3830013eee60249a9a8dd9377ab95e, type: 3}
-  m_PrefabInstance: {fileID: 745001220093882100}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2058788941 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7711574281960262825, guid: 7b3830013eee60249a9a8dd9377ab95e, type: 3}
-  m_PrefabInstance: {fileID: 745001220093882100}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e8bf87076fb6d74393639611028accf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProgressBar
 --- !u!1001 &745001220093882100
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -562,7 +546,7 @@ PrefabInstance:
     - target: {fileID: 6271849035168251842, guid: 7b3830013eee60249a9a8dd9377ab95e, type: 3}
       propertyPath: healthBar
       value: 
-      objectReference: {fileID: 2058788941}
+      objectReference: {fileID: 0}
     - target: {fileID: 8967248168518157007, guid: 7b3830013eee60249a9a8dd9377ab95e, type: 3}
       propertyPath: m_SortingOrder
       value: -1
