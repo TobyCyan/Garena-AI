@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8010415998057769560}
   - component: {fileID: 2030741000314581330}
   - component: {fileID: 591409843328594794}
+  - component: {fileID: 1376213373080300727}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -202,6 +203,43 @@ MonoBehaviour:
   weaponEnd: {fileID: 7012345678901234568}
   createFallbackWeapons: 1
   startingWeaponIndex: 0
+--- !u!70 &1376213373080300727
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2574217528491034551}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: -0, y: -0.63}
+  m_Size: {x: 0.42653418, y: 0.42653465}
+  m_Direction: 0
 --- !u!1 &6017738105016984115
 GameObject:
   m_ObjectHideFlags: 0
