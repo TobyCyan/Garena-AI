@@ -114,3 +114,6 @@ InitTestScene*.unity*
 /[Aa]ssets/[Ss]ceneDependencyCache*
 
 .env
+
+# Locally generated API sprites
+/GeneratedSprites/

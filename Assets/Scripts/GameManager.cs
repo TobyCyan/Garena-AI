@@ -38,18 +38,19 @@ public class GameManager : MonoBehaviour
         onReply?.Invoke(reply);
     }
 
-    /// <summary>
-    /// Starts the pipeline asynchronously and reports the result through callbacks.
-    /// </summary>
-    public void ExecutePipelines(string input)
+    public void ExecutePipelines(
+        string input,
+        Action<BasePipelineData> onCompleted,
+        Action<string> onFailed)
     {
-        ExecutePipelines(input, null, null);
+        ExecutePipelines(input, onCompleted, onFailed, null);
     }
 
     public void ExecutePipelines(
         string input,
         Action<BasePipelineData> onCompleted,
-        Action<string> onFailed)
+        Action<string> onFailed,
+        Action onBeforeShowcase)
     {
         if (string.IsNullOrWhiteSpace(input))
         {
@@ -63,14 +64,16 @@ public class GameManager : MonoBehaviour
             PipelineID.WeaponBuild,
             inputData,
             onCompleted,
-            onFailed);
+            onFailed,
+            onBeforeShowcase);
     }
 
     private async Task ExecutePipelineAsync(
         PipelineID id,
         BasePipelineData input,
         Action<BasePipelineData> onCompleted,
-        Action<string> onFailed)
+        Action<string> onFailed,
+        Action onBeforeShowcase)
     {
         BasePipelineData output;
 
@@ -94,15 +97,19 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        HandlePipelineResults(output);
-        onCompleted?.Invoke(output);
+        HandlePipelineResults(output, onCompleted, onFailed, onBeforeShowcase);
     }
 
-    private void HandlePipelineResults(BasePipelineData output)
+    private void HandlePipelineResults(
+        BasePipelineData output,
+        Action<BasePipelineData> onCompleted,
+        Action<string> onFailed,
+        Action onBeforeShowcase)
     {
         if (output == null)
         {
             Debug.LogWarning("Pipeline output is null.");
+            onFailed?.Invoke("Pipeline output is null.");
             return;
         }
 
@@ -110,12 +117,54 @@ public class GameManager : MonoBehaviour
         {
             case WeaponBuildPipelineResultData weaponResult:
                 Weapon builtWeapon = weaponResult.Weapon;
-                weaponShowcaseManager.ShowcaseWeapon(builtWeapon.gameObject);
+                if (builtWeapon == null)
+                {
+                    Debug.LogWarning("Built weapon is null.");
+                    onFailed?.Invoke("Built weapon is null.");
+                    return;
+                }
+
+                onBeforeShowcase?.Invoke();
+                weaponShowcaseManager.ShowcaseWeapon(
+                    builtWeapon.gameObject,
+                    () =>
+                    {
+                        EquipShowcasedWeapon(weaponResult);
+                        onCompleted?.Invoke(output);
+                    });
                 break;
 
             default:
                 Debug.LogWarning("Unhandled pipeline result type.");
+                onFailed?.Invoke("Unhandled pipeline result type.");
                 break;
         }
+    }
+
+    private void EquipShowcasedWeapon(WeaponBuildPipelineResultData weaponResult)
+    {
+        WeaponInventory inventory = FindWeaponInventory();
+        Weapon equippedWeapon = inventory != null
+            ? inventory.EquipBuiltWeapon(weaponResult.Weapon)
+            : null;
+
+        if (equippedWeapon == null)
+        {
+            Debug.LogWarning("Showcased weapon could not be equipped.", this);
+        }
+    }
+
+    private static WeaponInventory FindWeaponInventory()
+    {
+        global::Player.PlayerController player =
+            FindAnyObjectByType<global::Player.PlayerController>(
+                FindObjectsInactive.Include);
+        if (player != null && player.WeaponInventory != null)
+        {
+            return player.WeaponInventory;
+        }
+
+        return FindAnyObjectByType<WeaponInventory>(
+            FindObjectsInactive.Include);
     }
 }

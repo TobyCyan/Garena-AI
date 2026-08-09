@@ -157,6 +157,8 @@ namespace Player.Weapons
             if (weaponRenderer != null)
             {
                 weaponRenderer.sprite = image;
+                weaponRenderer.enabled = image != null;
+                weaponRenderer.gameObject.SetActive(true);
             }
 
             gameObject.name = weaponName;

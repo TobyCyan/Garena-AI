@@ -88,19 +88,36 @@ public sealed class ChatInputManager : MonoBehaviour
         gameManager.ExecutePipelines(
             LastFinalizedInput,
             HandlePipelineCompleted,
-            HandlePipelineFailed);
+            HandlePipelineFailed,
+            CloseChatWindow);
         Debug.Log($"Finalized conversation: {LastFinalizedInput}", this);
         chatBox.AppendMessage("System", "Weapon request confirmed. Generating weapon...");
     }
 
     private void HandlePipelineCompleted(BasePipelineData output)
     {
+        if (chatBox == null || !chatBox.isActiveAndEnabled)
+        {
+            return;
+        }
+
         chatBox.AppendMessage("System", "Weapon generation complete.");
     }
 
     private void HandlePipelineFailed(string message)
     {
+        if (chatBox == null || !chatBox.isActiveAndEnabled)
+        {
+            Debug.LogWarning(message, this);
+            return;
+        }
+
         chatBox.AppendMessage("System", message);
+    }
+
+    private void CloseChatWindow()
+    {
+        chatBox?.CloseWindow();
     }
 
     private bool TryResolveGameManager()

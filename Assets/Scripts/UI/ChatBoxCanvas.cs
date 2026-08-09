@@ -57,6 +57,11 @@ public sealed class ChatBoxCanvas : MonoBehaviour
 
         conversationText.text += $"{separator}{prefix}{message.Trim()}";
 
+        if (!isActiveAndEnabled)
+        {
+            return;
+        }
+
         if (scrollRefreshRoutine != null)
         {
             StopCoroutine(scrollRefreshRoutine);
@@ -91,6 +96,11 @@ public sealed class ChatBoxCanvas : MonoBehaviour
         }
 
         ConfirmRequested?.Invoke();
+    }
+
+    public void CloseWindow()
+    {
+        gameObject.SetActive(false);
     }
 
     private void HandleInputSubmitted(string _)

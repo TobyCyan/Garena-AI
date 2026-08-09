@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
 public class WeaponShowcaseManager : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class WeaponShowcaseManager : MonoBehaviour
     // Weapon Sprite Animation Settings
     [SerializeField] private float lerpDuration = 0.25f;
     [SerializeField] private Vector3 initialSpriteScale = new(1.5f, 1.5f, 1f);
+    [SerializeField] private int showcaseSortingOrder = 100;
     private static readonly Vector3 ORIGINAL_SPRITE_SCALE = Vector3.one;
 
     public void Init()
@@ -23,27 +25,37 @@ public class WeaponShowcaseManager : MonoBehaviour
         }
     }
 
-    public void ShowcaseWeapon(GameObject weaponGo)
+    public void ShowcaseWeapon(GameObject weaponGo, Action onComplete = null)
     {
         if (weaponGo == null)
         {
             Debug.LogWarning("Weapon GameObject is null. Cannot showcase.");
+            onComplete?.Invoke();
             return;
         }
 
         weaponGo.SetActive(true);
+        weaponGo.transform.SetParent(transform, false);
         weaponGo.transform.localPosition = Vector3.zero;
 
         SpriteRenderer spriteRenderer =
             weaponGo.GetComponentInChildren<SpriteRenderer>(true);
+        Player.Weapons.WeaponSwingAnimator swingAnimator =
+            weaponGo.GetComponent<Player.Weapons.WeaponSwingAnimator>();
+        swingAnimator?.SetKeepVisible(true);
 
         if (spriteRenderer != null)
         {
-            LerpWeaponSpriteScale(spriteRenderer, lerpDuration);
+            spriteRenderer.enabled = true;
+            spriteRenderer.gameObject.SetActive(true);
+            spriteRenderer.transform.localPosition = Vector3.zero;
+            ApplyShowcaseSorting(spriteRenderer);
+            LerpWeaponSpriteScale(spriteRenderer, lerpDuration, onComplete);
         }
         else
         {
             Debug.LogWarning("Weapon GameObject does not have a SpriteRenderer component.");
+            onComplete?.Invoke();
         }
 
         if (burstEffect != null)
@@ -52,17 +64,34 @@ public class WeaponShowcaseManager : MonoBehaviour
         }
     }
 
-    private void LerpWeaponSpriteScale(SpriteRenderer spriteRenderer, float duration)
+    private void ApplyShowcaseSorting(SpriteRenderer spriteRenderer)
+    {
+        if (spriteRenderer == null)
+        {
+            return;
+        }
+
+        spriteRenderer.sortingOrder = showcaseSortingOrder;
+    }
+
+    private void LerpWeaponSpriteScale(
+        SpriteRenderer spriteRenderer,
+        float duration,
+        Action onComplete)
     {
         if (spriteRenderer == null)
         {
             Debug.LogWarning("SpriteRenderer is null. Cannot lerp scale.");
+            onComplete?.Invoke();
             return;
         }
-        StartCoroutine(LerpCoroutine(spriteRenderer, duration));
+        StartCoroutine(LerpCoroutine(spriteRenderer, duration, onComplete));
     }
 
-    private IEnumerator LerpCoroutine(SpriteRenderer spriteRenderer, float duration)
+    private IEnumerator LerpCoroutine(
+        SpriteRenderer spriteRenderer,
+        float duration,
+        Action onComplete)
     {
         spriteRenderer.transform.localScale = initialSpriteScale;
 
@@ -75,5 +104,6 @@ public class WeaponShowcaseManager : MonoBehaviour
             yield return null;
         }
         spriteRenderer.transform.localScale = ORIGINAL_SPRITE_SCALE;
+        onComplete?.Invoke();
     }
 }
