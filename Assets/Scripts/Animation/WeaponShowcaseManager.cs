@@ -2,21 +2,20 @@ using UnityEngine;
 using System.Collections;
 using System;
 using UnityEngine.UI;
-using Player.Weapons;
 
 public class WeaponShowcaseManager : MonoBehaviour
 {
     [SerializeField] private ParticleSystem burstEffect;
     [SerializeField] private Button confirmButton;
+    [SerializeField] private Image weaponImage;
 
     // Particle System Settings
     private const int SEED = 12345;
 
     // Weapon Sprite Animation Settings
     [SerializeField] private float lerpDuration = 0.25f;
-    [SerializeField] private Vector3 initialSpriteScale = new(1.5f, 1.5f, 1f);
-    [SerializeField] private int showcaseSortingOrder = 100;
-    private static readonly Vector3 ORIGINAL_SPRITE_SCALE = Vector3.one;
+    [SerializeField] private Vector2 initialSpriteScale = new(600f, 600f);
+    private static readonly Vector2 ORIGINAL_SPRITE_SCALE = new(500f, 500f);
     public Action OnWeaponConfirmed;
 
     public void Init()
@@ -34,35 +33,28 @@ public class WeaponShowcaseManager : MonoBehaviour
             confirmButton.interactable = false;
             confirmButton.gameObject.SetActive(false);
         }
+
+        if (weaponImage != null)
+        {
+            weaponImage.gameObject.SetActive(false);
+        }
     }
 
-    public void ShowcaseWeapon(GameObject weaponGo)
+    public void ShowcaseWeapon(Sprite weaponSprite)
     {
         SetConfirmButtonActive(false);
 
-        if (weaponGo == null)
+        if (weaponSprite == null)
         {
-            Debug.LogWarning("Weapon GameObject is null. Cannot showcase.");
+            Debug.LogWarning("Weapon Sprite is null. Cannot showcase.");
             return;
         }
 
-        weaponGo.SetActive(true);
-        weaponGo.transform.SetParent(transform, false);
-        weaponGo.transform.localPosition = Vector3.zero;
-
-        SpriteRenderer spriteRenderer =
-            weaponGo.GetComponentInChildren<SpriteRenderer>(true);
-        MeleeWeaponSwingAnimator swingAnimator =
-            weaponGo.GetComponent<MeleeWeaponSwingAnimator>();
-        swingAnimator.SetKeepVisible(true);
-
-        if (spriteRenderer != null)
+        if (weaponImage != null)
         {
-            spriteRenderer.enabled = true;
-            spriteRenderer.gameObject.SetActive(true);
-            spriteRenderer.transform.localPosition = Vector3.zero;
-            ApplyShowcaseSorting(spriteRenderer);
-            LerpWeaponSpriteScale(spriteRenderer, lerpDuration);
+            weaponImage.sprite = weaponSprite;
+            weaponImage.gameObject.SetActive(true);
+            LerpWeaponSpriteScale(weaponImage.GetComponent<RectTransform>(), lerpDuration);
         }
         else
         {
@@ -77,48 +69,39 @@ public class WeaponShowcaseManager : MonoBehaviour
         }
     }
 
-    private void ApplyShowcaseSorting(SpriteRenderer spriteRenderer)
-    {
-        if (spriteRenderer == null)
-        {
-            return;
-        }
-
-        spriteRenderer.sortingOrder = showcaseSortingOrder;
-    }
-
     private void LerpWeaponSpriteScale(
-        SpriteRenderer spriteRenderer,
+        RectTransform rect,
         float duration)
     {
-        if (spriteRenderer == null)
+        if (rect == null)
         {
-            Debug.LogWarning("SpriteRenderer is null. Cannot lerp scale.");
+            Debug.LogWarning("RectTransform is null. Cannot lerp scale.");
             return;
         }
-        StartCoroutine(LerpCoroutine(spriteRenderer, duration));
+        StartCoroutine(LerpCoroutine(rect, duration));
     }
 
     private IEnumerator LerpCoroutine(
-        SpriteRenderer spriteRenderer,
+        RectTransform rect,
         float duration)
     {
-        spriteRenderer.transform.localScale = initialSpriteScale;
-
+        rect.sizeDelta = initialSpriteScale;
+        
         float elapsedTime = 0f;
         while (elapsedTime < duration)
         {
             float t = elapsedTime / duration;
-            spriteRenderer.transform.localScale = Vector3.Lerp(initialSpriteScale, ORIGINAL_SPRITE_SCALE, t);
+            rect.sizeDelta = Vector3.Lerp(initialSpriteScale, ORIGINAL_SPRITE_SCALE, t);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        spriteRenderer.transform.localScale = ORIGINAL_SPRITE_SCALE;
+        rect.sizeDelta = ORIGINAL_SPRITE_SCALE;
     }
 
     private void OnConfirmButtonClicked()
     {
         SetConfirmButtonActive(false);
+        SetWeaponImageActive(false);
         OnWeaponConfirmed?.Invoke();
     }
 
@@ -131,11 +114,21 @@ public class WeaponShowcaseManager : MonoBehaviour
         }
     }
 
+    private void SetWeaponImageActive(bool active)
+    {
+        if (weaponImage != null)
+        {
+            weaponImage.gameObject.SetActive(active);
+        }
+    }
+
     private void OnDestroy()
     {
         if (confirmButton != null)
         {
             confirmButton.onClick.RemoveListener(OnConfirmButtonClicked);
         }
+
+        OnWeaponConfirmed = null;
     }
 }

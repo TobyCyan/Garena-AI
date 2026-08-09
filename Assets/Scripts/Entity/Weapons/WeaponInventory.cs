@@ -152,9 +152,6 @@ namespace Player.Weapons
             WeaponFactory.ApplyRendererSorting(weapon, WeaponSocket);
             ConfigureWeapon(weapon);
             ApplyEquippedSpriteBoundsOffset(weapon);
-            MeleeWeaponSwingAnimator swingAnimator =
-                weapon.GetComponent<MeleeWeaponSwingAnimator>();
-            swingAnimator.SetKeepVisible(false);
             if (slot >= 0 && slot < weapons.Count)
             {
                 Weapon oldWeapon = weapons[slot];

@@ -19,35 +19,30 @@ namespace Player.Weapons
         private Transform gripRaised;
         private Transform gripEnd;
         private WeaponPose currentPose = WeaponPose.None;
-        private bool keepVisible;
 
         private void Awake()
         {
             weapon = GetComponent<Weapon>();
             pivot = pivot != null ? pivot : transform.Find("Base");
-            playerRenderer = transform.parent != null
-                ? transform.parent.GetComponentInParent<SpriteRenderer>()
-                : null;
+            ResolvePlayerRenderer();
             weaponRenderers = GetComponentsInChildren<SpriteRenderer>(true);
             pivotRestLocalPosition = pivot != null ? pivot.localPosition : Vector3.zero;
-            SetWeaponVisible(keepVisible);
+            SetWeaponVisible(false);
         }
 
         private void OnEnable()
         {
             weapon = weapon != null ? weapon : GetComponent<Weapon>();
+            ResolvePlayerRenderer();
             weaponRenderers ??= GetComponentsInChildren<SpriteRenderer>(true);
             weapon.OnAttackStarted += HandleAttackStarted;
             weapon.OnAttackFinished += HandleAttackFinished;
-            SetWeaponVisible(keepVisible || weapon.IsAttacking);
+            SetWeaponVisible(weapon.IsAttacking);
         }
 
         private void OnDisable()
         {
-            if (!keepVisible)
-            {
-                SetWeaponVisible(false);
-            }
+            SetWeaponVisible(false);
             currentPose = WeaponPose.None;
 
             if (weapon != null)
@@ -61,11 +56,12 @@ namespace Player.Weapons
         {
             if (weapon == null || !weapon.IsAttacking || playerRenderer == null)
             {
-                SetWeaponVisible(keepVisible);
+                SetWeaponVisible(false);
                 return;
             }
 
             WeaponPose pose = GetAttackPose(playerRenderer.sprite);
+            Debug.Log($"Current Pose: {currentPose}, New Pose: {pose}");
             if (pose == WeaponPose.None)
             {
                 SetWeaponVisible(false);
@@ -93,23 +89,18 @@ namespace Player.Weapons
             gripStart = start;
             gripRaised = raised;
             gripEnd = end;
-        }
-
-        public void SetKeepVisible(bool visible)
-        {
-            keepVisible = visible;
-            SetWeaponVisible(keepVisible || (weapon != null && weapon.IsAttacking));
+            ResolvePlayerRenderer();
         }
 
         private void HandleAttackStarted(Weapon attackingWeapon)
         {
-            SetWeaponVisible(keepVisible);
+            SetWeaponVisible(true);
             currentPose = WeaponPose.None;
         }
 
         private void HandleAttackFinished(Weapon attackingWeapon)
         {
-            SetWeaponVisible(keepVisible);
+            SetWeaponVisible(false);
         }
 
         private static WeaponPose GetAttackPose(Sprite sprite)
@@ -174,6 +165,17 @@ namespace Player.Weapons
                     weaponRenderer.enabled = visible;
                 }
             }
+        }
+
+        private void ResolvePlayerRenderer()
+        {
+            if (playerRenderer != null)
+            {
+                return;
+            }
+            playerRenderer = transform.parent != null
+                ? transform.parent.GetComponentInParent<SpriteRenderer>()
+                : null;
         }
     }
 
