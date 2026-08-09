@@ -1,7 +1,0 @@
-{
-    "name": "ChatUI",
-    "references": [
-        "Unity.TextMeshPro",
-        "Game"
-    ]
-}

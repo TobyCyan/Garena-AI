@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 using UnityEngine.UI;
+using Player.Weapons;
 
 public class WeaponShowcaseManager : MonoBehaviour
 {
@@ -51,9 +52,9 @@ public class WeaponShowcaseManager : MonoBehaviour
 
         SpriteRenderer spriteRenderer =
             weaponGo.GetComponentInChildren<SpriteRenderer>(true);
-        Player.Weapons.MeleeWeaponSwingAnimator swingAnimator =
-            weaponGo.GetComponent<Player.Weapons.MeleeWeaponSwingAnimator>();
-        swingAnimator?.SetKeepVisible(true);
+        MeleeWeaponSwingAnimator swingAnimator =
+            weaponGo.GetComponent<MeleeWeaponSwingAnimator>();
+        swingAnimator.SetKeepVisible(true);
 
         if (spriteRenderer != null)
         {
