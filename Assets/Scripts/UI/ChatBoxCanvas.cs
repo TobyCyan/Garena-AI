@@ -90,12 +90,25 @@ public sealed class ChatBoxCanvas : MonoBehaviour
 
     public void ConfirmCurrentInput()
     {
+        if (confirmButton != null && !confirmButton.interactable)
+        {
+            return;
+        }
+
         if (inputField != null && !string.IsNullOrWhiteSpace(inputField.text))
         {
             SubmitCurrentInput();
         }
 
         ConfirmRequested?.Invoke();
+    }
+
+    public void SetConfirmInteractable(bool interactable)
+    {
+        if (confirmButton != null)
+        {
+            confirmButton.interactable = interactable;
+        }
     }
 
     public void CloseWindow()

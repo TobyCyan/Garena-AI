@@ -85,6 +85,7 @@ public sealed class ChatInputManager : MonoBehaviour
             return;
         }
 
+        chatBox.SetConfirmInteractable(false);
         gameManager.ExecutePipelines(
             LastFinalizedInput,
             HandlePipelineCompleted,
@@ -113,6 +114,7 @@ public sealed class ChatInputManager : MonoBehaviour
         }
 
         chatBox.AppendMessage("System", message);
+        chatBox.SetConfirmInteractable(true);
     }
 
     private void CloseChatWindow()
