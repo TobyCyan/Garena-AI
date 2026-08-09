@@ -28,18 +28,29 @@ public sealed class ChatBoxCanvas : MonoBehaviour
 
     private void OnEnable()
     {
-        sendButton?.onClick.AddListener(SubmitCurrentInput);
-        confirmButton?.onClick.AddListener(ConfirmCurrentInput);
-        inputField?.onSubmit.AddListener(HandleInputSubmitted);
+        if (conversationText != null)
+        {
+            conversationText.text = string.Empty;
+        }
+        if (sendButton != null)
+            sendButton.onClick.AddListener(SubmitCurrentInput);
+        if (confirmButton != null)
+            confirmButton.onClick.AddListener(ConfirmCurrentInput);
+        if (inputField != null)
+            inputField.onSubmit.AddListener(HandleInputSubmitted);
+            
         scrollRefreshRoutine = StartCoroutine(RefreshScrollAfterLayout("OnEnable"));
     }
 
     private void OnDisable()
     {
-        sendButton?.onClick.RemoveListener(SubmitCurrentInput);
-        confirmButton?.onClick.RemoveListener(ConfirmCurrentInput);
-        inputField?.onSubmit.RemoveListener(HandleInputSubmitted);
-    }
+        if (sendButton != null)
+            sendButton.onClick.RemoveListener(SubmitCurrentInput);
+        if (confirmButton != null)
+            confirmButton.onClick.RemoveListener(ConfirmCurrentInput);
+        if (inputField != null)
+            inputField.onSubmit.RemoveListener(HandleInputSubmitted);
+  }
 
     public void AppendMessage(string speaker, string message)
     {
