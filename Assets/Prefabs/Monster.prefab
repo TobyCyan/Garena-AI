@@ -180,14 +180,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Progress Bar Canvas
       objectReference: {fileID: 0}
-    - target: {fileID: 3660089428713837103, guid: 03bdd4dd5397e42438e6a0370e559eb7, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3660089428713837103, guid: 03bdd4dd5397e42438e6a0370e559eb7, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8707797423950118026, guid: 03bdd4dd5397e42438e6a0370e559eb7, type: 3}
       propertyPath: m_Pivot.x
       value: 0
