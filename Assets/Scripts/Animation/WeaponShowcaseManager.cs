@@ -7,6 +7,7 @@ public class WeaponShowcaseManager : MonoBehaviour
 {
     [SerializeField] private ParticleSystem burstEffect;
     [SerializeField] private Button confirmButton;
+    [SerializeField] private Button retryButton;
     [SerializeField] private Image weaponImage;
 
     // Particle System Settings
@@ -17,6 +18,7 @@ public class WeaponShowcaseManager : MonoBehaviour
     [SerializeField] private Vector2 initialSpriteScale = new(600f, 600f);
     private static readonly Vector2 ORIGINAL_SPRITE_SCALE = new(500f, 500f);
     public Action OnWeaponConfirmed;
+    public Action OnWeaponRetry;
 
     public void Init()
     {
@@ -27,16 +29,21 @@ public class WeaponShowcaseManager : MonoBehaviour
             burstEffect.randomSeed = SEED;
         }
 
-        if (confirmButton != null)
-        {
-            confirmButton.onClick.AddListener(OnConfirmButtonClicked);
-            confirmButton.interactable = false;
-            confirmButton.gameObject.SetActive(false);
-        }
-
         if (weaponImage != null)
         {
             weaponImage.gameObject.SetActive(false);
+        }
+
+        if (confirmButton != null)
+        {
+            confirmButton.onClick.AddListener(OnConfirmButtonClicked);
+            SetConfirmButtonActive(false);
+        }
+
+        if (retryButton != null)
+        {
+            retryButton.onClick.AddListener(OnRetryButtonClicked);
+            SetRetryButtonActive(false);
         }
     }
 
@@ -116,6 +123,23 @@ public class WeaponShowcaseManager : MonoBehaviour
         }
     }
 
+    private void OnRetryButtonClicked()
+    {
+        SoundEffectManager.Play("buttonclick");
+        SetRetryButtonActive(false);
+        SetWeaponImageActive(false);
+        OnWeaponRetry?.Invoke();
+    }
+
+    private void SetRetryButtonActive(bool active)
+    {
+        if (retryButton != null)
+        {
+            retryButton.interactable = active;
+            retryButton.gameObject.SetActive(active);
+        }
+    }
+
     private void SetWeaponImageActive(bool active)
     {
         if (weaponImage != null)
@@ -132,5 +156,6 @@ public class WeaponShowcaseManager : MonoBehaviour
         }
 
         OnWeaponConfirmed = null;
+        OnWeaponRetry = null;
     }
 }

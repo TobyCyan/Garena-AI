@@ -146,8 +146,14 @@ public class GameManager : MonoBehaviour
                 SceneTransitionManager.LoadNextScene();
         }
 
+        void OnWeaponRetry()
+        {
+            weaponShowcaseManager.OnWeaponRetry -= OnWeaponRetry;
+        }
+
         onBeforeShowcase?.Invoke();
         weaponShowcaseManager.OnWeaponConfirmed += OnWeaponConfirmed;
+        weaponShowcaseManager.OnWeaponRetry += OnWeaponRetry;
         weaponShowcaseManager.ShowcaseWeapon(builtWeapon.Image);
     }
 
