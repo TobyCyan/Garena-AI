@@ -1,15 +1,13 @@
 using Player.Weapons;
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class WeaponStatsService
 {
-    public static WeaponStatsData GenerateWeaponStats(string description)
+    public static async Task<WeaponStatsData> GenerateWeaponStatsAsync(string description)
     {
-        string weaponResult = StatsApiService
-            .GetStats(description)
-            .GetAwaiter()
-            .GetResult();
+        string weaponResult = await StatsApiService.GetStats(description);
 
         return ParseToStats(weaponResult);
     }

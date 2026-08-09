@@ -19,31 +19,51 @@ namespace Player.Weapons
 
             GameObject spriteObject = new("WeaponSprite");
             spriteObject.transform.SetParent(baseObject.transform, false);
+            spriteObject.transform.localPosition = Vector3.zero;
+            spriteObject.SetActive(true);
+            
             SpriteRenderer weaponRenderer = spriteObject.AddComponent<SpriteRenderer>();
-            SpriteRenderer playerRenderer = parent != null
-                ? parent.GetComponentInParent<SpriteRenderer>()
-                : null;
-            if (playerRenderer != null)
-            {
-                weaponRenderer.sortingLayerID = playerRenderer.sortingLayerID;
-                weaponRenderer.sortingOrder = playerRenderer.sortingOrder + 1;
-            }
+            weaponRenderer.enabled = true;
+            ApplyRendererSorting(weaponRenderer, parent);
 
             Weapon weapon = root.AddComponent<Weapon>();
             weapon.Configure(definition);
 
-            if (definition.Image != null)
-            {
-                Bounds spriteBounds = definition.Image.bounds;
-                spriteObject.transform.localPosition = new Vector3(
-                    -spriteBounds.min.x,
-                    -spriteBounds.center.y,
-                    0f);
-            }
-
             WeaponSwingAnimator swingAnimator = root.AddComponent<WeaponSwingAnimator>();
             swingAnimator.SetPivot(baseObject.transform);
             return weapon;
+        }
+
+        public static void ApplyRendererSorting(Weapon weapon, Transform parent)
+        {
+            if (weapon == null)
+            {
+                return;
+            }
+
+            SpriteRenderer weaponRenderer =
+                weapon.GetComponentInChildren<SpriteRenderer>(true);
+            ApplyRendererSorting(weaponRenderer, parent);
+        }
+
+        private static void ApplyRendererSorting(
+            SpriteRenderer weaponRenderer,
+            Transform parent)
+        {
+            if (weaponRenderer == null || parent == null)
+            {
+                return;
+            }
+
+            SpriteRenderer parentRenderer =
+                parent.GetComponentInParent<SpriteRenderer>();
+            if (parentRenderer == null)
+            {
+                return;
+            }
+
+            weaponRenderer.sortingLayerID = parentRenderer.sortingLayerID;
+            weaponRenderer.sortingOrder = parentRenderer.sortingOrder + 1;
         }
 
         public static Weapon CreateMeleeWeapon(
@@ -53,7 +73,7 @@ namespace Player.Weapons
             Transform parent)
         {
             return CreateWeapon(
-                new WeaponDefinition(name, WeaponCategory.Melee, image, stats),
+                new WeaponDefinition(name, WeaponCategory.Sword, image, stats),
                 parent);
         }
     }

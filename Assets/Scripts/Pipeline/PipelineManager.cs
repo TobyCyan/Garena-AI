@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class PipelineManager : MonoBehaviour
@@ -44,7 +45,7 @@ public class PipelineManager : MonoBehaviour
         );
     }
 
-    public BasePipelineData ExecutePipeline(
+    public async Task<BasePipelineData> ExecutePipelineAsync(
         PipelineID id,
         BasePipelineData input)
     {
@@ -56,7 +57,7 @@ public class PipelineManager : MonoBehaviour
 
         try
         {
-            return pipeline.Pipe(input);
+            return await pipeline.PipeAsync(input);
         }
         catch (PipelineException ex)
         {

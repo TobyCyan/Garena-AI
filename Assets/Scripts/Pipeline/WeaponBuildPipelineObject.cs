@@ -1,9 +1,9 @@
 using Player.Weapons;
-using UnityEngine;
+using System.Threading.Tasks;
 
 public class WeaponBuildPipelineObject : IPipelineObject
 {
-    public BasePipelineData DoPipe(BasePipelineData input)
+    public Task<BasePipelineData> DoPipeAsync(BasePipelineData input)
     {
         if (input is not WeaponBuildRequestPipelineData data)
         {
@@ -15,14 +15,9 @@ public class WeaponBuildPipelineObject : IPipelineObject
         {
             throw new PipelineException("Weapon definition is required.");
         }
-        global::Player.PlayerController player =
-            Object.FindAnyObjectByType<global::Player.PlayerController>();
-        if (player == null || player.WeaponInventory == null)
-        {
-            throw new PipelineException("A player with a WeaponInventory is required to build a weapon.");
-        }
 
-        Weapon weapon = player.WeaponInventory.Build(definition);
-        return new WeaponBuildPipelineResultData(weapon);
+        Weapon weapon = WeaponFactory.CreateWeapon(definition, null);
+        return Task.FromResult<BasePipelineData>(
+            new WeaponBuildPipelineResultData(weapon));
     }
 }

@@ -148,7 +148,13 @@ namespace Player.Weapons
                 return null;
             }
 
+            weapon.transform.SetParent(WeaponSocket, false);
+            WeaponFactory.ApplyRendererSorting(weapon, WeaponSocket);
             ConfigureWeapon(weapon);
+            ApplyEquippedSpriteBoundsOffset(weapon);
+            WeaponSwingAnimator swingAnimator =
+                weapon.GetComponent<WeaponSwingAnimator>();
+            swingAnimator?.SetKeepVisible(true);
             if (slot >= 0 && slot < weapons.Count)
             {
                 Weapon oldWeapon = weapons[slot];
@@ -167,6 +173,29 @@ namespace Player.Weapons
             }
 
             return weapon;
+        }
+
+        private static void ApplyEquippedSpriteBoundsOffset(Weapon weapon)
+        {
+            if (weapon == null || weapon.Image == null)
+            {
+                return;
+            }
+
+            SpriteRenderer spriteRenderer =
+                weapon.GetComponentInChildren<SpriteRenderer>(true);
+            if (spriteRenderer == null)
+            {
+                return;
+            }
+
+            spriteRenderer.enabled = true;
+            spriteRenderer.gameObject.SetActive(true);
+            Bounds spriteBounds = weapon.Image.bounds;
+            spriteRenderer.transform.localPosition = new Vector3(
+                -spriteBounds.min.x,
+                -spriteBounds.center.y,
+                0f);
         }
 
         private void RefreshWeaponList()

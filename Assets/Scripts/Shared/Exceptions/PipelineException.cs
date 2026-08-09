@@ -1,6 +1,12 @@
-public class PipelineException : System.Exception
+using System;
+
+public class PipelineException : Exception
 {
     public PipelineException(string message) : base(message)
+    {
+    }
+
+    public PipelineException(string message, Exception innerException) : base(message, innerException)
     {
     }
 }
