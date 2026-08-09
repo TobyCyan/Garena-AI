@@ -7,7 +7,7 @@ namespace Player.Weapons
 {
     [DefaultExecutionOrder(110)]
     [DisallowMultipleComponent]
-    [RequireComponent(typeof(global::Player.PlayerController))]
+    [RequireComponent(typeof(PlayerController))]
     public sealed class WeaponBuildTester : MonoBehaviour
     {
         [SerializeField] private bool buildGeneratedSpritesOnStart;
@@ -16,11 +16,11 @@ namespace Player.Weapons
         [SerializeField] private float generatedSpriteSpeed = 1.5f;
         [SerializeField, Min(0)] private int maxGeneratedSprites;
 
-        private global::Player.PlayerController player;
+        private PlayerController player;
 
         private void Awake()
         {
-            player = GetComponent<global::Player.PlayerController>();
+            player = GetComponent<PlayerController>();
         }
 
         private void Start()
