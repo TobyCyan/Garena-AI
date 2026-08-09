@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using System;
 
 public class WeaponStatGeneratorPipelineObject : IPipelineObject
 {
@@ -8,8 +9,18 @@ public class WeaponStatGeneratorPipelineObject : IPipelineObject
         {
             throw new PipelineException("Input data must be of type WeaponStatsPipelineInputData.");
         }
-        WeaponStatsData generatedStats =
-            await WeaponStatsService.GenerateWeaponStatsAsync(data.Prompt);
-        return new WeaponStatsPipelineData(generatedStats, data.Prompt);
+
+        try
+        {
+            WeaponStatsData generatedStats =
+                await WeaponStatsService.GenerateWeaponStatsAsync(data.Prompt);
+            return new WeaponStatsPipelineData(generatedStats, data.Prompt);
+        }
+        catch (Exception e)
+        {
+            throw new PipelineException(
+                $"Failed to generate weapon stats for prompt: {data.Prompt}",
+                e);
+        }
     }
 }
