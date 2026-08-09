@@ -19,7 +19,6 @@ namespace Player.Weapons
         private Transform gripRaised;
         private Transform gripEnd;
         private WeaponPose currentPose = WeaponPose.None;
-        private bool keepVisible;
 
         private void Awake()
         {
@@ -30,7 +29,7 @@ namespace Player.Weapons
                 : null;
             weaponRenderers = GetComponentsInChildren<SpriteRenderer>(true);
             pivotRestLocalPosition = pivot != null ? pivot.localPosition : Vector3.zero;
-            SetWeaponVisible(keepVisible);
+            SetWeaponVisible(false);
         }
 
         private void OnEnable()
@@ -39,15 +38,12 @@ namespace Player.Weapons
             weaponRenderers ??= GetComponentsInChildren<SpriteRenderer>(true);
             weapon.OnAttackStarted += HandleAttackStarted;
             weapon.OnAttackFinished += HandleAttackFinished;
-            SetWeaponVisible(keepVisible || weapon.IsAttacking);
+            SetWeaponVisible(weapon.IsAttacking);
         }
 
         private void OnDisable()
         {
-            if (!keepVisible)
-            {
-                SetWeaponVisible(false);
-            }
+            SetWeaponVisible(false);
             currentPose = WeaponPose.None;
 
             if (weapon != null)
@@ -61,7 +57,7 @@ namespace Player.Weapons
         {
             if (weapon == null || !weapon.IsAttacking || playerRenderer == null)
             {
-                SetWeaponVisible(keepVisible);
+                SetWeaponVisible(false);
                 return;
             }
 
@@ -95,21 +91,15 @@ namespace Player.Weapons
             gripEnd = end;
         }
 
-        public void SetKeepVisible(bool visible)
-        {
-            keepVisible = visible;
-            SetWeaponVisible(keepVisible || (weapon != null && weapon.IsAttacking));
-        }
-
         private void HandleAttackStarted(Weapon attackingWeapon)
         {
-            SetWeaponVisible(keepVisible);
+            SetWeaponVisible(true);
             currentPose = WeaponPose.None;
         }
 
         private void HandleAttackFinished(Weapon attackingWeapon)
         {
-            SetWeaponVisible(keepVisible);
+            SetWeaponVisible(false);
         }
 
         private static WeaponPose GetAttackPose(Sprite sprite)

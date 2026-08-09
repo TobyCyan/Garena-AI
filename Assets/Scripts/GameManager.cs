@@ -145,7 +145,7 @@ public class GameManager : MonoBehaviour
 
         onBeforeShowcase?.Invoke();
         weaponShowcaseManager.OnWeaponConfirmed += OnWeaponConfirmed;
-        weaponShowcaseManager.ShowcaseWeapon(builtWeapon.gameObject);
+        weaponShowcaseManager.ShowcaseWeapon(builtWeapon.Image);
     }
 
     private void EquipShowcasedWeapon(WeaponBuildPipelineResultData weaponResult)
