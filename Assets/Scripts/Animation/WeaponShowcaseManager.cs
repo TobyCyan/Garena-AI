@@ -51,8 +51,8 @@ public class WeaponShowcaseManager : MonoBehaviour
 
         SpriteRenderer spriteRenderer =
             weaponGo.GetComponentInChildren<SpriteRenderer>(true);
-        Player.Weapons.WeaponSwingAnimator swingAnimator =
-            weaponGo.GetComponent<Player.Weapons.WeaponSwingAnimator>();
+        Player.Weapons.MeleeWeaponSwingAnimator swingAnimator =
+            weaponGo.GetComponent<Player.Weapons.MeleeWeaponSwingAnimator>();
         swingAnimator?.SetKeepVisible(true);
 
         if (spriteRenderer != null)

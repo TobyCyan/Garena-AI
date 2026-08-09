@@ -152,8 +152,8 @@ namespace Player.Weapons
             WeaponFactory.ApplyRendererSorting(weapon, WeaponSocket);
             ConfigureWeapon(weapon);
             ApplyEquippedSpriteBoundsOffset(weapon);
-            WeaponSwingAnimator swingAnimator =
-                weapon.GetComponent<WeaponSwingAnimator>();
+            MeleeWeaponSwingAnimator swingAnimator =
+                weapon.GetComponent<MeleeWeaponSwingAnimator>();
             swingAnimator.SetKeepVisible(false);
             if (slot >= 0 && slot < weapons.Count)
             {
@@ -218,7 +218,7 @@ namespace Player.Weapons
             }
 
             weapon.SetCore(core);
-            if (weapon.TryGetComponent<WeaponSwingAnimator>(out var swingAnimator))
+            if (weapon.TryGetComponent<MeleeWeaponSwingAnimator>(out var swingAnimator))
             {
                 swingAnimator.SetGripPath(WeaponSocket, weaponRaised, weaponEnd);
             }
