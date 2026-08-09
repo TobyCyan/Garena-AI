@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Player.Weapons;
+using Player;
 
 [DefaultExecutionOrder(100)]
 [DisallowMultipleComponent]
-[RequireComponent(typeof(global::Player.PlayerController))]
+[RequireComponent(typeof(PlayerController))]
 public sealed class WeaponSwapTester : MonoBehaviour
 {
     [SerializeField] private List<WeaponDefinition> testWeapons = new()
@@ -14,11 +15,11 @@ public sealed class WeaponSwapTester : MonoBehaviour
     };
     [SerializeField] private int startingSlot;
 
-    private global::Player.PlayerController player;
+    private PlayerController player;
 
     private void Awake()
     {
-        player = GetComponent<global::Player.PlayerController>();
+        player = GetComponent<PlayerController>();
     }
 
     private void Start()

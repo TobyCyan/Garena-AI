@@ -13,8 +13,11 @@ public sealed class ChatInputManager : MonoBehaviour
 
     private void Awake()
     {
-        chatBox ??= GetComponent<ChatBoxCanvas>();
-        gameManager ??= FindAnyObjectByType<GameManager>();
+        if (chatBox == null)
+            chatBox = GetComponent<ChatBoxCanvas>();
+        
+        if (gameManager == null)
+            gameManager = FindAnyObjectByType<GameManager>();
     }
 
     private void OnEnable()
@@ -124,7 +127,10 @@ public sealed class ChatInputManager : MonoBehaviour
 
     private bool TryResolveGameManager()
     {
-        gameManager ??= FindAnyObjectByType<GameManager>();
+        if (gameManager == null)
+        {
+            gameManager = FindAnyObjectByType<GameManager>();
+        }
         return gameManager != null;
     }
 }

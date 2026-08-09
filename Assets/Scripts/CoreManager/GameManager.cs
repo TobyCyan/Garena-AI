@@ -10,8 +10,9 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private PipelineManager pipelineManager;
     [SerializeField] private WeaponShowcaseManager weaponShowcaseManager;
-    [SerializeField, TextArea] private string placeholderChatReply =
-        DefaultChatReply;
+    [SerializeField] private GeneratedWeaponContextManager generatedWeaponContextManager;
+    [SerializeField] private SceneTransitionManager sceneTransitionManager;
+    [SerializeField, TextArea] private string placeholderChatReply = DefaultChatReply;
 
     private void Start()
     {
@@ -138,9 +139,11 @@ public class GameManager : MonoBehaviour
 
         void OnWeaponConfirmed()
         {
-            EquipShowcasedWeapon(weaponResult);
+            SaveGeneratedWeaponContext(weaponResult);
             onCompleted?.Invoke(weaponResult);
             weaponShowcaseManager.OnWeaponConfirmed -= OnWeaponConfirmed;
+            if (sceneTransitionManager != null)
+                SceneTransitionManager.LoadNextScene();
         }
 
         onBeforeShowcase?.Invoke();
@@ -148,30 +151,14 @@ public class GameManager : MonoBehaviour
         weaponShowcaseManager.ShowcaseWeapon(builtWeapon.Image);
     }
 
-    private void EquipShowcasedWeapon(WeaponBuildPipelineResultData weaponResult)
+    private void SaveGeneratedWeaponContext(WeaponBuildPipelineResultData weaponResult)
     {
-        WeaponInventory inventory = FindWeaponInventory();
-        Weapon equippedWeapon = inventory != null
-            ? inventory.EquipBuiltWeapon(weaponResult.Weapon)
-            : null;
-
-        if (equippedWeapon == null)
+        if (generatedWeaponContextManager == null)
         {
-            Debug.LogWarning("Showcased weapon could not be equipped.", this);
-        }
-    }
-
-    private static WeaponInventory FindWeaponInventory()
-    {
-        global::Player.PlayerController player =
-            FindAnyObjectByType<global::Player.PlayerController>(
-                FindObjectsInactive.Include);
-        if (player != null && player.WeaponInventory != null)
-        {
-            return player.WeaponInventory;
+            Debug.LogWarning("GeneratedWeaponContextManager was not found. Weapon cannot persist across scenes.", this);
+            return;
         }
 
-        return FindAnyObjectByType<WeaponInventory>(
-            FindObjectsInactive.Include);
+        generatedWeaponContextManager.SaveGeneratedWeapon(weaponResult.Weapon);
     }
 }
