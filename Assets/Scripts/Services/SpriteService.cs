@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 using static UnityEngine.Object;
@@ -39,6 +40,7 @@ public class SpriteService
         texture.name = "GeneratedSpriteTexture";
         texture.filterMode = FilterMode.Point;
         texture.wrapMode = TextureWrapMode.Clamp;
+        SaveGeneratedSpriteTexture(texture);
 
         Sprite sprite = Sprite.Create(
             texture,
@@ -50,5 +52,34 @@ public class SpriteService
         sprite.name = "GeneratedSprite";
 
         return sprite;
+    }
+
+    private static void SaveGeneratedSpriteTexture(Texture2D texture)
+    {
+        if (texture == null)
+        {
+            return;
+        }
+
+        try
+        {
+            string directory = Path.Combine(
+                Application.persistentDataPath,
+                "GeneratedSprites");
+            Directory.CreateDirectory(directory);
+
+            string fileName =
+                $"weapon-sprite-{DateTime.Now:yyyyMMdd-HHmmss}.png";
+            string path = Path.Combine(directory, fileName);
+
+            File.WriteAllBytes(path, texture.EncodeToPNG());
+            Debug.Log($"Saved generated weapon sprite to: {path}");
+        }
+        catch (Exception exception)
+        {
+            Debug.LogWarning(
+                $"Generated sprite was created but could not be saved: " +
+                exception.Message);
+        }
     }
 }

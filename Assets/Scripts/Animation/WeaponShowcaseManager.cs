@@ -34,7 +34,10 @@ public class WeaponShowcaseManager : MonoBehaviour
         weaponGo.SetActive(true);
         weaponGo.transform.localPosition = Vector3.zero;
 
-        if (weaponGo.TryGetComponent(out SpriteRenderer spriteRenderer))
+        SpriteRenderer spriteRenderer =
+            weaponGo.GetComponentInChildren<SpriteRenderer>(true);
+
+        if (spriteRenderer != null)
         {
             LerpWeaponSpriteScale(spriteRenderer, lerpDuration);
         }
