@@ -26,6 +26,10 @@ namespace Player
         public PlayerMoveState MoveState { get; private set; }
         public PlayerAttackState AttackState { get; private set; }
 
+        [SerializeField, Min(0.05f)]
+        private float footstepInterval = 0.5f;
+        public float FootstepInterval => footstepInterval;
+
         private void Awake()
         {
             playerData ??= PlayerData.CreateRuntimeDefault();
