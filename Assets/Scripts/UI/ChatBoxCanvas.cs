@@ -28,10 +28,6 @@ public sealed class ChatBoxCanvas : MonoBehaviour
 
     private void OnEnable()
     {
-        if (conversationText != null)
-        {
-            conversationText.text = string.Empty;
-        }
         if (sendButton != null)
             sendButton.onClick.AddListener(SubmitCurrentInput);
         if (confirmButton != null)
@@ -124,10 +120,44 @@ public sealed class ChatBoxCanvas : MonoBehaviour
         }
     }
 
+    public void OpenWindow()
+    {
+        gameObject.SetActive(true);
+    }
+
     public void CloseWindow()
     {
         gameObject.SetActive(false);
     }
+
+    public void ResetConversation()
+    {
+        if (conversationText != null)
+        {
+            conversationText.text = string.Empty;
+        }
+
+        if (inputField != null)
+        {
+            inputField.text = string.Empty;
+        }
+
+        SetConfirmInteractable(true);
+
+        if (!isActiveAndEnabled)
+        {
+            return;
+        }
+
+        if (scrollRefreshRoutine != null)
+        {
+            StopCoroutine(scrollRefreshRoutine);
+        }
+
+        scrollRefreshRoutine = StartCoroutine(RefreshScrollAfterLayout("ResetConversation"));
+        if (inputField != null)
+            inputField.ActivateInputField();
+  }
 
     private void HandleInputSubmitted(string _)
     {
@@ -140,13 +170,12 @@ public sealed class ChatBoxCanvas : MonoBehaviour
 
         ApplyConversationPadding();
         Canvas.ForceUpdateCanvases();
-        conversationText?.ForceMeshUpdate();
-
         if (conversationText != null)
         {
+            conversationText.ForceMeshUpdate();
+            
             float preferredHeight = Mathf.Ceil(conversationText.preferredHeight);
-            LayoutElement textLayout = conversationText.GetComponent<LayoutElement>();
-            if (textLayout == null)
+            if (!conversationText.TryGetComponent<LayoutElement>(out var textLayout))
             {
                 textLayout = conversationText.gameObject.AddComponent<LayoutElement>();
             }

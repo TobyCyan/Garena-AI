@@ -20,7 +20,7 @@ public class SoundEffectLibrary : MonoBehaviour
         }
     }
 
-    public AudioClip GetRandomCLip(string name)
+    public AudioClip GetRandomClip(string name)
     {
         if (soundDictionary.ContainsKey(name))
         {

@@ -1,7 +1,8 @@
 using System;
 using UnityEngine;
-
 [DisallowMultipleComponent]
+
+[RequireComponent(typeof(ChatBoxCanvas))]
 public sealed class ChatInputManager : MonoBehaviour
 {
     [SerializeField] private ChatBoxCanvas chatBox;
@@ -10,6 +11,32 @@ public sealed class ChatInputManager : MonoBehaviour
     public event Action<string> FinalizedInputSubmitted;
     public string LastFinalizedInput { get; private set; }
     public string LastAiReply { get; private set; }
+
+    public void OpenNewSession()
+    {
+        LastFinalizedInput = string.Empty;
+        LastAiReply = string.Empty;
+
+        if (chatBox == null)
+        {
+            chatBox = GetComponent<ChatBoxCanvas>();
+        }
+
+        if (chatBox == null)
+        {
+            Debug.LogError("ChatInputManager needs a ChatBoxCanvas reference.", this);
+            return;
+        }
+
+        chatBox.OpenWindow();
+        chatBox.ResetConversation();
+    }
+
+    public void CloseSession()
+    {
+        if (chatBox != null)
+            chatBox.CloseWindow();
+    }
 
     private void Awake()
     {
@@ -92,8 +119,7 @@ public sealed class ChatInputManager : MonoBehaviour
         gameManager.ExecutePipelines(
             LastFinalizedInput,
             HandlePipelineCompleted,
-            HandlePipelineFailed,
-            CloseChatWindow);
+            HandlePipelineFailed);
         Debug.Log($"Finalized conversation: {LastFinalizedInput}", this);
         chatBox.AppendMessage("System", "Weapon request confirmed. Generating weapon...");
     }
@@ -118,11 +144,6 @@ public sealed class ChatInputManager : MonoBehaviour
 
         chatBox.AppendMessage("System", message);
         chatBox.SetConfirmInteractable(true);
-    }
-
-    private void CloseChatWindow()
-    {
-        chatBox?.CloseWindow();
     }
 
     private bool TryResolveGameManager()

@@ -15,10 +15,10 @@ public class SoundEffectManager : MonoBehaviour
 
     public static void Play(string name)
     {
-        AudioClip audioCLip = soundEffectLibrary.GetRandomCLip(name);
-        if (audioCLip != null)
+        AudioClip audioClip = soundEffectLibrary.GetRandomClip(name);
+        if (audioClip != null)
         {
-            audioSource.PlayOneShot(audioCLip);
+            audioSource.PlayOneShot(audioClip);
         }
     }
 }
