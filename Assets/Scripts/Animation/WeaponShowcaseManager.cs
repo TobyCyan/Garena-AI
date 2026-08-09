@@ -69,6 +69,7 @@ public class WeaponShowcaseManager : MonoBehaviour
         }
 
         SetConfirmButtonActive(true);
+        SetRetryButtonActive(true);
 
         SoundEffectManager.Play("generationcomplete");
         if (burstEffect != null)
@@ -110,6 +111,7 @@ public class WeaponShowcaseManager : MonoBehaviour
     {
         SoundEffectManager.Play("buttonclick");
         SetConfirmButtonActive(false);
+        SetRetryButtonActive(false);
         SetWeaponImageActive(false);
         OnWeaponConfirmed?.Invoke();
     }
@@ -126,6 +128,7 @@ public class WeaponShowcaseManager : MonoBehaviour
     private void OnRetryButtonClicked()
     {
         SoundEffectManager.Play("buttonclick");
+        SetConfirmButtonActive(false);
         SetRetryButtonActive(false);
         SetWeaponImageActive(false);
         OnWeaponRetry?.Invoke();
@@ -153,6 +156,11 @@ public class WeaponShowcaseManager : MonoBehaviour
         if (confirmButton != null)
         {
             confirmButton.onClick.RemoveListener(OnConfirmButtonClicked);
+        }
+
+        if (retryButton != null)
+        {
+            retryButton.onClick.RemoveListener(OnRetryButtonClicked);
         }
 
         OnWeaponConfirmed = null;
