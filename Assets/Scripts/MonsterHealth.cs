@@ -8,6 +8,7 @@ public sealed class MonsterHealth : MonoBehaviour, IDamageable
     [SerializeField, Min(1)] private int maxHealth = 10;
     [SerializeField, Min(0)] private int currentHealth;
     [SerializeField] private ProgressBar healthBar;
+    public Animator animator;
 
     public int CurrentHealth => currentHealth;
     public int MaxHealth => maxHealth;
@@ -44,6 +45,7 @@ public sealed class MonsterHealth : MonoBehaviour, IDamageable
 
         currentHealth = Mathf.Max(0, currentHealth - damage.Amount);
         UpdateHealthBar();
+        animator.SetTrigger("Attacked");
 
         string weaponName = damage.Weapon != null
             ? damage.Weapon.WeaponName

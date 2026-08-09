@@ -111,6 +111,7 @@ MonoBehaviour:
   maxHealth: 10
   currentHealth: 0
   healthBar: {fileID: 4609891188612376315}
+  animator: {fileID: 5311060218267644896}
 --- !u!61 &983742007150193010
 BoxCollider2D:
   m_ObjectHideFlags: 0
