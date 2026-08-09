@@ -24,7 +24,6 @@ namespace Player.Weapons
             
             SpriteRenderer weaponRenderer = spriteObject.AddComponent<SpriteRenderer>();
             weaponRenderer.enabled = true;
-            ApplyRendererSorting(weaponRenderer, parent);
 
             Weapon weapon = root.AddComponent<Weapon>();
             weapon.Configure(definition);
@@ -32,38 +31,6 @@ namespace Player.Weapons
             MeleeWeaponSwingAnimator swingAnimator = root.AddComponent<MeleeWeaponSwingAnimator>();
             swingAnimator.SetPivot(baseObject.transform);
             return weapon;
-        }
-
-        public static void ApplyRendererSorting(Weapon weapon, Transform parent)
-        {
-            if (weapon == null)
-            {
-                return;
-            }
-
-            SpriteRenderer weaponRenderer =
-                weapon.GetComponentInChildren<SpriteRenderer>(true);
-            ApplyRendererSorting(weaponRenderer, parent);
-        }
-
-        private static void ApplyRendererSorting(
-            SpriteRenderer weaponRenderer,
-            Transform parent)
-        {
-            if (weaponRenderer == null || parent == null)
-            {
-                return;
-            }
-
-            SpriteRenderer parentRenderer =
-                parent.GetComponentInParent<SpriteRenderer>();
-            if (parentRenderer == null)
-            {
-                return;
-            }
-
-            weaponRenderer.sortingLayerID = parentRenderer.sortingLayerID;
-            weaponRenderer.sortingOrder = parentRenderer.sortingOrder + 1;
         }
 
         public static Weapon CreateMeleeWeapon(

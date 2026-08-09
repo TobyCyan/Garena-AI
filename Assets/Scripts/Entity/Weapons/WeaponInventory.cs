@@ -149,7 +149,6 @@ namespace Player.Weapons
             }
 
             weapon.transform.SetParent(WeaponSocket, false);
-            WeaponFactory.ApplyRendererSorting(weapon, WeaponSocket);
             ConfigureWeapon(weapon);
             ApplyEquippedSpriteBoundsOffset(weapon);
             if (slot >= 0 && slot < weapons.Count)
