@@ -46,6 +46,7 @@ public sealed class MonsterHealth : MonoBehaviour, IDamageable
         currentHealth = Mathf.Max(0, currentHealth - damage.Amount);
         UpdateHealthBar();
         animator.SetTrigger("Attacked");
+        SoundEffectManager.Play("punch");
 
         string weaponName = damage.Weapon != null
             ? damage.Weapon.WeaponName

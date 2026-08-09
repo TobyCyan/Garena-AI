@@ -1,10 +1,20 @@
+using UnityEngine;
+
 namespace Player.PlayerStates
 {
     public sealed class PlayerMoveState : PlayerGroundedState
     {
+        private float footstepTimer;
+
         public PlayerMoveState(PlayerController player, PlayerStateMachine stateMachine, string animationParameter)
             : base(player, stateMachine, animationParameter)
         {
+        }
+
+        public override void Enter()
+        {
+            base.Enter();
+            footstepTimer = 0f;
         }
 
         public override void LogicUpdate()
@@ -22,6 +32,20 @@ namespace Player.PlayerStates
             {
                 stateMachine.ChangeState(player.IdleState);
             }
+
+            footstepTimer -= Time.deltaTime;
+
+            if (footstepTimer <= 0f)
+            {
+                SoundEffectManager.Play("footstep");
+                footstepTimer = player.FootstepInterval;
+            }
+        }
+
+        public override void Exit()
+        {
+            base.Exit();
+            footstepTimer = 0f;
         }
     }
 }
