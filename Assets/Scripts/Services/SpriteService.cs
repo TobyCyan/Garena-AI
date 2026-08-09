@@ -42,8 +42,8 @@ public class SpriteService
         }
 
         texture.name = "GeneratedSpriteTexture";
-        Texture2D texCopy = PrepareGeneratedWeaponTexture(texture);
-        SaveGeneratedSpriteTexture(texCopy);
+        texture = PrepareGeneratedWeaponTexture(texture);
+        SaveGeneratedSpriteTexture(texture);
 
         Sprite sprite = Sprite.Create(
             texture,
